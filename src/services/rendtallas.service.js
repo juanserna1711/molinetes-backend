@@ -3,9 +3,9 @@ import { getConnection } from '../config/database.js';
 
 
 /**
- * Consulta TALLA.
+ * Consulta TALLA y su información de RENDTALL asociada.
  */
-export async function consultarTallas({
+export async function consultarRendTallas({
     codTalla = null,
     nomTalla = null,
     estaTalla = null
@@ -20,7 +20,7 @@ export async function consultarTallas({
         result = await connection.execute(
             `
             BEGIN
-                PKG_TALLA.consultaTalla(
+                PKG_RENDTALLA.consultaRendTalla(
                     :cod_talla,
                     :nom_talla,
                     :esta_talla,
@@ -49,7 +49,14 @@ export async function consultarTallas({
         return rows.map(row => ({
             codigo: row[0],
             nombre: row[1],
-            estado: row[2]
+            estado: row[2],
+            ancho: row[3],
+            pesoM2: row[4],
+            pesoRollo: row[5],
+            rendimiento: row[6],
+            metrosRollo: row[7],
+            fechaGeneracion: row[8],
+            usuario: row[9]
         }));
 
     } finally {
@@ -61,9 +68,9 @@ export async function consultarTallas({
 
 
 /**
- * Inserta una TALLA.
+ * Inserta una TALLA y su RENDTALL asociado.
  */
-export async function insertarTalla(data) {
+export async function insertarRendTalla(data) {
 
     let connection;
 
@@ -73,17 +80,25 @@ export async function insertarTalla(data) {
         await connection.execute(
             `
             BEGIN
-                PKG_TALLA.insertarTalla(
+                PKG_RENDTALLA.insertarRendTalla(
                     :cod_talla,
                     :nom_talla,
-                    :esta_talla
+                    :esta_talla,
+                    :ancho_rendtall,
+                    :peso_rendtall,
+                    :rollo_rendtall,
+                    :usuario_rendtall
                 );
             END;
             `,
             {
                 cod_talla: data.codTalla,
                 nom_talla: data.nomTalla,
-                esta_talla: data.estaTalla
+                esta_talla: data.estaTalla,
+                ancho_rendtall: data.anchoRendtall,
+                peso_rendtall: data.pesoRendtall,
+                rollo_rendtall: data.rolloRendtall,
+                usuario_rendtall: data.usuarioRendtall
             }
         );
 
@@ -96,9 +111,9 @@ export async function insertarTalla(data) {
 
 
 /**
- * Actualiza TALLA.
+ * Actualiza RENDTALL y su TALLA asociada.
  */
-export async function actualizarTalla(codTalla, data) {
+export async function actualizarRendTalla(codTalla, data) {
 
     let connection;
 
@@ -108,17 +123,25 @@ export async function actualizarTalla(codTalla, data) {
         await connection.execute(
             `
             BEGIN
-                PKG_TALLA.actualizarTalla(
+                PKG_RENDTALLA.actualizarRendTalla(
                     :cod_talla,
                     :nom_talla,
-                    :esta_talla
+                    :esta_talla,
+                    :ancho_rendtall,
+                    :peso_rendtall,
+                    :rollo_rendtall,
+                    :usuario_rendtall
                 );
             END;
             `,
             {
                 cod_talla: codTalla,
                 nom_talla: data.nomTalla,
-                esta_talla: data.estaTalla
+                esta_talla: data.estaTalla,
+                ancho_rendtall: data.anchoRendtall,
+                peso_rendtall: data.pesoRendtall,
+                rollo_rendtall: data.rolloRendtall,
+                usuario_rendtall: data.usuarioRendtall
             }
         );
 
@@ -129,11 +152,10 @@ export async function actualizarTalla(codTalla, data) {
     }
 }
 
-
 /**
- * Activa una TALLA.
+ * Elimina una TALLA y su RENDTALL asociado.
  */
-export async function activarTalla(codTalla) {
+export async function eliminarRendTalla(codTalla) {
 
     let connection;
 
@@ -143,36 +165,7 @@ export async function activarTalla(codTalla) {
         await connection.execute(
             `
             BEGIN
-                PKG_TALLA.activarTalla(:cod_talla);
-            END;
-            `,
-            {
-                cod_talla: codTalla
-            }
-        );
-
-    } finally {
-        if (connection) {
-            await connection.close();
-        }
-    }
-}
-
-
-/**
- * Desactiva una TALLA.
- */
-export async function desactivarTalla(codTalla) {
-
-    let connection;
-
-    try {
-        connection = await getConnection();
-
-        await connection.execute(
-            `
-            BEGIN
-                PKG_TALLA.desactivarTalla(:cod_talla);
+                PKG_RENDTALLA.eliminarRendTalla(:cod_talla);
             END;
             `,
             {

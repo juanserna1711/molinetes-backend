@@ -4,6 +4,7 @@ import dotenv from 'dotenv';
 
 import { initDatabase, closeDatabase } from './config/database.js';
 import tallasRoutes from './routes/tallas.routes.js';
+import rendtallasRoutes from './routes/rendtallas.routes.js';
 
 dotenv.config();
 
@@ -31,6 +32,8 @@ app.get('/health', (req, res) => {
 // Rutas
 app.use('/api/tallas', tallasRoutes);
 
+app.use('/api/rendtallas', rendtallasRoutes);
+
 
 async function startServer() {
 
@@ -46,6 +49,7 @@ async function startServer() {
             console.log(`Servidor: http://localhost:${PORT}`);
             console.log(`Health:   http://localhost:${PORT}/health`);
             console.log(`Tallas:   http://localhost:${PORT}/api/tallas`);
+            console.log(`Rendimiento x Talla: http://localhost:${PORT}/api/rendtallas`);
             console.log('======================================');
 
         });

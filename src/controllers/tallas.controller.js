@@ -3,8 +3,7 @@ import {
     insertarTalla,
     actualizarTalla,
     activarTalla,
-    desactivarTalla,
-    eliminarTalla
+    desactivarTalla
 } from '../services/tallas.service.js';
 
 import { handleError } from '../utils/handleError.js';
@@ -110,26 +109,6 @@ export async function desactivar(req, res) {
             error,
             res,
             'Error al desactivar la talla.'
-        );
-    }
-}
-
-export async function eliminar(req, res) {
-    try {
-        const codTalla = Number(req.params.codigo);
-
-        await eliminarTalla(codTalla);
-
-        return res.status(200).json({
-            success: true,
-            message: 'Talla eliminada correctamente.'
-        });
-
-    } catch (error) {
-        return handleError(
-            error,
-            res,
-            'Error al eliminar la talla.'
         );
     }
 }
