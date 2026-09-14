@@ -48,7 +48,8 @@ export async function consultarUsuarios({
         return rows.map(row => ({
             codigo: row[0],
             nombre: row[1],
-            estado: row[2]
+            password: row[2],
+            estado: row[3]
         }));
 
     } finally {
