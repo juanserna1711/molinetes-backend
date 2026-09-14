@@ -1,11 +1,11 @@
 import {
-    consultarTallas,
-    insertarTalla,
-    actualizarTalla,
-    activarTalla,
-    desactivarTalla,
-    eliminarTalla,
-} from '../services/tallas.service.js';
+    consultarUsuarios,
+    insertarUsuario,
+    actualizarUsuario,
+    activarUsuario,
+    desactivarUsuario,
+    eliminarUsuario
+} from '../services/usuarios.service.js';
 
 import { handleError } from '../utils/handleError.js';
 
@@ -14,40 +14,40 @@ export async function consultar(req, res) {
     try {
         const { codigo, nombre, estado } = req.query;
 
-        const tallas = await consultarTallas({
-            codTalla: codigo ? Number(codigo) : null,
-            nomTalla: nombre || null,
-            estaTalla: estado || null
+        const usuarios = await consultarUsuarios({
+            codUsuario: codigo ? Number(codigo) : null,
+            nomUsuario: nombre || null,
+            estaUsuario: estado || null
         });
 
         return res.status(200).json({
             success: true,
-            data: tallas
+            data: usuarios
         });
 
     } catch (error) {
         return handleError(
             error,
             res,
-            'Error al consultar las tallas.'
+            'Error al consultar los usuarios.'
         );
     }
 }
 
 export async function crear(req, res) {
     try {
-        await insertarTalla(req.body);
+        await insertarUsuario(req.body);
 
         return res.status(201).json({
             success: true,
-            message: 'Talla creada correctamente.'
+            message: 'Usuario creado correctamente.'
         });
 
     } catch (error) {
         return handleError(
             error,
             res,
-            'Error al crear la talla.'
+            'Error al crear el usuario.'
         );
     }
 }
@@ -55,40 +55,40 @@ export async function crear(req, res) {
 
 export async function actualizar(req, res) {
     try {
-        const codTalla = Number(req.params.codigo);
+        const codUsuario = Number(req.params.codigo);
 
-        await actualizarTalla(codTalla, req.body);
+        await actualizarUsuario(codUsuario, req.body);
 
         return res.status(200).json({
             success: true,
-            message: 'Talla actualizada correctamente.'
+            message: 'Usuario actualizado correctamente.'
         });
 
     } catch (error) {
         return handleError(
             error,
             res,
-            'Error al actualizar la talla.'
+            'Error al actualizar el usuario.'
         );
     }
 }
 
 export async function activar(req, res) {
     try {
-        const codTalla = Number(req.params.codigo);
+        const codUsuario = Number(req.params.codigo);
 
-        await activarTalla(codTalla);
+        await activarUsuario(codUsuario);
 
         return res.status(200).json({
             success: true,
-            message: 'Talla activada correctamente.'
+            message: 'Usuario activado correctamente.'
         });
 
     } catch (error) {
         return handleError(
             error,
             res,
-            'Error al activar la talla.'
+            'Error al activar el usuario.'
         );
     }
 }
@@ -96,40 +96,40 @@ export async function activar(req, res) {
 
 export async function desactivar(req, res) {
     try {
-        const codTalla = Number(req.params.codigo);
+        const codUsuario = Number(req.params.codigo);
 
-        await desactivarTalla(codTalla);
+        await desactivarUsuario(codUsuario);
 
         return res.status(200).json({
             success: true,
-            message: 'Talla desactivada correctamente.'
+            message: 'Usuario desactivado correctamente.'
         });
 
     } catch (error) {
         return handleError(
             error,
             res,
-            'Error al desactivar la talla.'
+            'Error al desactivar el usuario.'
         );
     }
 }
 
 export async function eliminar(req, res) {
     try {
-        const codTalla = Number(req.params.codigo);
+        const codUsuario = Number(req.params.codigo);
 
-        await eliminarTalla(codTalla);
+        await eliminarUsuario(codUsuario);
 
         return res.status(200).json({
             success: true,
-            message: 'Talla eliminada correctamente.'
+            message: 'Usuario eliminado correctamente.'
         });
 
     } catch (error) {
         return handleError(
             error,
             res,
-            'Error al eliminar la talla.'
+            'Error al eliminar el usuario.'
         );
     }
 }

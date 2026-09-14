@@ -5,6 +5,8 @@ import dotenv from 'dotenv';
 import { initDatabase, closeDatabase } from './config/database.js';
 import tallasRoutes from './routes/tallas.routes.js';
 import rendtallasRoutes from './routes/rendtallas.routes.js';
+import usuariosRoutes from './routes/usuarios.routes.js';
+import molinetesRoutes from './routes/molinetes.routes.js'
 
 dotenv.config();
 
@@ -34,6 +36,10 @@ app.use('/api/tallas', tallasRoutes);
 
 app.use('/api/rendtallas', rendtallasRoutes);
 
+app.use('/api/usuarios', usuariosRoutes);
+
+app.use('/api/molinetes', molinetesRoutes);
+
 
 async function startServer() {
 
@@ -50,6 +56,8 @@ async function startServer() {
             console.log(`Health:   http://localhost:${PORT}/health`);
             console.log(`Tallas:   http://localhost:${PORT}/api/tallas`);
             console.log(`Rendimiento x Talla: http://localhost:${PORT}/api/rendtallas`);
+            console.log(`Usuarios: http://localhost:${PORT}/api/usuarios`);
+            console.log(`Molinetes: http://localhost:${PORT}/api/molinetes`);
             console.log('======================================');
 
         });
