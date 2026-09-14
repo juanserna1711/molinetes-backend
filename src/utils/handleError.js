@@ -14,7 +14,8 @@ export function handleError(error, res, defaultMessage) {
         20008: 404,
         20009: 404,
         20010: 400,
-        20011: 400
+        20011: 400,
+        20012: 409
     };
 
     const businessMessages = {
@@ -28,7 +29,8 @@ export function handleError(error, res, defaultMessage) {
         20008: 'El usuario indicado no existe.',
         20009: 'El molinete indicado no existe.',
         20010: 'El RPM del molinete no es válido, debe estar entre 1 y 999.',
-        20011: 'El perímetro del molinete no es válido, debe estar entre 1 y 999.'
+        20011: 'El perímetro del molinete no es válido, debe estar entre 1 y 999.',
+        20012: 'No se puede eliminar la talla porque tiene registros de rendimiento asociados.'
     };
 
     const statusCode = businessErrors[oracleCode] || 500;

@@ -7,7 +7,7 @@ import {
     activar,
     desactivar,
     eliminar
-} from '../controllers/tallas.controller.js';
+} from '../controllers/usuarios.controller.js';
 
 const router = Router();
 

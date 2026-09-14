@@ -3,12 +3,12 @@ import { getConnection } from '../config/database.js';
 
 
 /**
- * Consulta TALLA.
+ * Consulta USUARIO.
  */
-export async function consultarTallas({
-    codTalla = null,
-    nomTalla = null,
-    estaTalla = null
+export async function consultarUsuarios({
+    codUsuario = null,
+    nomUsuario = null,
+    estaUsuario = null
 } = {}) {
 
     let connection;
@@ -20,19 +20,18 @@ export async function consultarTallas({
         result = await connection.execute(
             `
             BEGIN
-                PKG_TALLA.consultaTalla(
-                    :cod_talla,
-                    :nom_talla,
-                    :esta_talla,
+                PKG_USUARIO.consultaUsuario(
+                    :cod_usuario,
+                    :nom_usuario,
+                    :esta_usuario,
                     :cursor
                 );
             END;
             `,
             {
-                cod_talla: codTalla,
-                nom_talla: nomTalla,
-                esta_talla: estaTalla,
-
+                cod_usuario: codUsuario,
+                nom_usuario: nomUsuario,
+                esta_usuario: estaUsuario,
                 cursor: {
                     dir: oracledb.BIND_OUT,
                     type: oracledb.CURSOR
@@ -61,9 +60,9 @@ export async function consultarTallas({
 
 
 /**
- * Inserta una TALLA.
+ * Inserta un USUARIO.
  */
-export async function insertarTalla(data) {
+export async function insertarUsuario(data) {
 
     let connection;
 
@@ -73,17 +72,19 @@ export async function insertarTalla(data) {
         await connection.execute(
             `
             BEGIN
-                PKG_TALLA.insertarTalla(
-                    :cod_talla,
-                    :nom_talla,
-                    :esta_talla
+                PKG_USUARIO.insertarUsuario(
+                    :cod_usuario,
+                    :nom_usuario,
+                    :pass_usuario,
+                    :esta_usuario
                 );
             END;
             `,
             {
-                cod_talla: data.codTalla,
-                nom_talla: data.nomTalla,
-                esta_talla: data.estaTalla
+                cod_usuario: data.codUsuario,
+                nom_usuario: data.nomUsuario,
+                pass_usuario: data.passUsuario,
+                esta_usuario: data.estaUsuario
             }
         );
 
@@ -96,9 +97,9 @@ export async function insertarTalla(data) {
 
 
 /**
- * Actualiza TALLA.
+ * Actualiza USUARIO.
  */
-export async function actualizarTalla(codTalla, data) {
+export async function actualizarUsuario(codUsuario, data) {
 
     let connection;
 
@@ -108,17 +109,19 @@ export async function actualizarTalla(codTalla, data) {
         await connection.execute(
             `
             BEGIN
-                PKG_TALLA.actualizarTalla(
-                    :cod_talla,
-                    :nom_talla,
-                    :esta_talla
+                PKG_USUARIO.actualizarUsuario(
+                    :cod_usuario,
+                    :nom_usuario,
+                    :pass_usuario,
+                    :esta_usuario
                 );
             END;
             `,
             {
-                cod_talla: codTalla,
-                nom_talla: data.nomTalla,
-                esta_talla: data.estaTalla
+                cod_usuario: codUsuario,
+                nom_usuario: data.nomUsuario,
+                pass_usuario: data.passUsuario,
+                esta_usuario: data.estaUsuario
             }
         );
 
@@ -131,9 +134,9 @@ export async function actualizarTalla(codTalla, data) {
 
 
 /**
- * Activa una TALLA.
+ * Activa un USUARIO.
  */
-export async function activarTalla(codTalla) {
+export async function activarUsuario(codUsuario) {
 
     let connection;
 
@@ -143,11 +146,11 @@ export async function activarTalla(codTalla) {
         await connection.execute(
             `
             BEGIN
-                PKG_TALLA.activarTalla(:cod_talla);
+                PKG_USUARIO.activarUsuario(:cod_usuario);
             END;
             `,
             {
-                cod_talla: codTalla
+                cod_usuario: codUsuario
             }
         );
 
@@ -160,9 +163,9 @@ export async function activarTalla(codTalla) {
 
 
 /**
- * Desactiva una TALLA.
+ * Desactiva un USUARIO.
  */
-export async function desactivarTalla(codTalla) {
+export async function desactivarUsuario(codUsuario) {
 
     let connection;
 
@@ -172,11 +175,11 @@ export async function desactivarTalla(codTalla) {
         await connection.execute(
             `
             BEGIN
-                PKG_TALLA.desactivarTalla(:cod_talla);
+                PKG_USUARIO.desactivarUsuario(:cod_usuario);
             END;
             `,
             {
-                cod_talla: codTalla
+                cod_usuario: codUsuario
             }
         );
 
@@ -188,9 +191,9 @@ export async function desactivarTalla(codTalla) {
 }
 
 /**
- * Elimina una TALLA.
+ * Elimina un USUARIO.
  */
-export async function eliminarTalla(codTalla) {
+export async function eliminarUsuario(codUsuario) {
 
     let connection;
 
@@ -200,11 +203,11 @@ export async function eliminarTalla(codTalla) {
         await connection.execute(
             `
             BEGIN
-                PKG_TALLA.eliminarTalla(:cod_talla);
+                PKG_USUARIO.eliminarUsuario(:cod_usuario);
             END;
             `,
             {
-                cod_talla: codTalla
+                cod_usuario: codUsuario
             }
         );
 
