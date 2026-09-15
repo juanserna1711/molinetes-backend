@@ -4,40 +4,92 @@ export function handleError(error, res, defaultMessage) {
     const oracleCode = error.errorNum;
 
     const businessErrors = {
-        20001: 400,
-        20002: 400,
-        20003: 400,
-        20004: 404,
-        20005: 409,
-        20006: 400,
-        20007: 400,
-        20008: 404,
-        20009: 404,
-        20010: 400,
-        20011: 400,
-        20012: 409
+        20001: {
+            status: 400,
+            field: 'anchoRendtall',
+            message: 'El ancho de la talla debe ser mayor que cero.'
+        },
+
+        20002: {
+            status: 400,
+            field: 'pesoRendtall',
+            message: 'El peso por metro cuadrado debe ser mayor que cero.'
+        },
+
+        20003: {
+            status: 400,
+            field: 'rolloRendtall',
+            message: 'El peso del rollo debe ser mayor que cero.'
+        },
+
+        20004: {
+            status: 404,
+            field: 'codTalla',
+            message: 'La talla indicada no existe.'
+        },
+
+        20005: {
+            status: 409,
+            field: null,
+            message: 'La talla no tiene información de rendimiento asociada.'
+        },
+
+        20006: {
+            status: 400,
+            field: 'rendimiento',
+            message: 'El rendimiento calculado supera el máximo permitido de 9.9.'
+        },
+
+        20007: {
+            status: 400,
+            field: 'metrosRollo',
+            message: 'Los metros por rollo calculados superan el máximo permitido de 999.9.'
+        },
+
+        20008: {
+            status: 404,
+            field: 'codUsuario',
+            message: 'El usuario indicado no existe.'
+        },
+
+        20009: {
+            status: 404,
+            field: 'codMolinete',
+            message: 'El molinete indicado no existe.'
+        },
+
+        20010: {
+            status: 400,
+            field: 'rpmMolinete',
+            message: 'El RPM del molinete no es válido, debe estar entre 1 y 999.'
+        },
+
+        20011: {
+            status: 400,
+            field: 'periMolinete',
+            message: 'El perímetro del molinete no es válido, debe estar entre 1 y 999.'
+        },
+
+        20012: {
+            status: 409,
+            field: null,
+            message: 'No se puede eliminar la talla porque tiene registros de rendimiento asociados.'
+        }
     };
 
-    const businessMessages = {
-        20001: 'El ancho de la talla debe ser mayor que cero.',
-        20002: 'El peso por metro cuadrado debe ser mayor que cero.',
-        20003: 'El peso del rollo debe ser mayor que cero.',
-        20004: 'La talla indicada no existe.',
-        20005: 'La talla no tiene información de rendimiento asociada.',
-        20006: 'El rendimiento calculado supera el máximo permitido de 9.9.',
-        20007: 'Los metros por rollo calculados superan el máximo permitido de 999.9.',
-        20008: 'El usuario indicado no existe.',
-        20009: 'El molinete indicado no existe.',
-        20010: 'El RPM del molinete no es válido, debe estar entre 1 y 999.',
-        20011: 'El perímetro del molinete no es válido, debe estar entre 1 y 999.',
-        20012: 'No se puede eliminar la talla porque tiene registros de rendimiento asociados.'
-    };
+    const businessError = businessErrors[oracleCode];
 
-    const statusCode = businessErrors[oracleCode] || 500;
-    const message = businessMessages[oracleCode] || defaultMessage;
+    if (!businessError) {
+        return res.status(500).json({
+            success: false,
+            message: defaultMessage
+        });
+    }
 
-    return res.status(statusCode).json({
+    return res.status(businessError.status).json({
         success: false,
-        message
+        code: oracleCode,
+        field: businessError.field,
+        message: businessError.message
     });
 }

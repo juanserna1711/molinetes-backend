@@ -14,9 +14,9 @@ export async function consultar(req, res) {
         const { codigo, nombre, estado } = req.query;
 
         const rendTallas = await consultarRendTallas({
-            codRendTalla: codigo ? Number(codigo) : null,
-            nomRendTalla: nombre || null,
-            estaRendTalla: estado || null
+            codTalla: codigo ? Number(codigo) : null,
+            nomTalla: nombre || null,
+            estaTalla: estado || null
         });
 
         return res.status(200).json({
