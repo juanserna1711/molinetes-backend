@@ -37,13 +37,13 @@ export function handleError(error, res, defaultMessage) {
         20006: {
             status: 400,
             field: 'rendimiento',
-            message: 'El rendimiento calculado supera el máximo permitido de 9.9.'
+            message: 'El rendimiento calculado supera el máximo permitido de 99.9.'
         },
 
         20007: {
             status: 400,
             field: 'metrosRollo',
-            message: 'Los metros por rollo calculados superan el máximo permitido de 999.9.'
+            message: 'Los metros por rollo calculados superan el máximo permitido de 99999.9.'
         },
 
         20008: {
@@ -69,11 +69,11 @@ export function handleError(error, res, defaultMessage) {
             field: 'periMolinete',
             message: 'El perímetro del molinete no es válido, debe estar entre 1 y 999.'
         },
-
+        
         20012: {
             status: 409,
             field: null,
-            message: 'No se puede eliminar la talla porque tiene registros de rendimiento asociados.'
+            message: 'La talla ya tiene información de rendimiento asociada.'
         }
     };
 

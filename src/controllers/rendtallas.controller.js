@@ -28,7 +28,7 @@ export async function consultar(req, res) {
         return handleError(
             error,
             res,
-            'Error al consultar las tallas.'
+            'Error al consultar las tallas con sus rendimientos.'
         );
     }
 }
@@ -39,14 +39,14 @@ export async function crear(req, res) {
 
         return res.status(201).json({
             success: true,
-            message: 'Rendimiento x Talla creado correctamente.'
+            message: 'Rendimiento creado correctamente.'
         });
 
     } catch (error) {
         return handleError(
             error,
             res,
-            'Error al crear el rendimiento x talla.'
+            'Error al crear el Rendimiento.'
         );
     }
 }
@@ -54,40 +54,40 @@ export async function crear(req, res) {
 
 export async function actualizar(req, res) {
     try {
-        const codRendTalla = Number(req.params.codigo);
+        const codTalla = Number(req.params.codigo);
 
-        await actualizarRendTalla(codRendTalla, req.body);
+        await actualizarRendTalla(codTalla, req.body);
 
         return res.status(200).json({
             success: true,
-            message: 'Rendimiento x Talla actualizado correctamente.'
+            message: 'Rendimiento actualizado correctamente.'
         });
 
     } catch (error) {
         return handleError(
             error,
             res,
-            'Error al actualizar el rendimiento x talla.'
+            'Error al actualizar el Rendimiento.'
         );
     }
 }
 
 export async function eliminar(req, res) {
     try {
-        const codRendTalla = Number(req.params.codigo);
+        const codTalla = Number(req.params.codigo);
 
-        await eliminarRendTalla(codRendTalla);
+        await eliminarRendTalla(codTalla);
 
         return res.status(200).json({
             success: true,
-            message: 'Rendimiento x Talla eliminado correctamente.'
+            message: 'Rendimiento eliminado correctamente.'
         });
 
     } catch (error) {
         return handleError(
             error,
             res,
-            'Error al eliminar el rendimiento x talla.'
+            'Error al eliminar el Rendimiento.'
         );
     }
 }

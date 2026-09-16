@@ -82,8 +82,6 @@ export async function insertarRendTalla(data) {
             BEGIN
                 PKG_RENDTALLA.insertarRendTalla(
                     :cod_talla,
-                    :nom_talla,
-                    :esta_talla,
                     :ancho_rendtall,
                     :peso_rendtall,
                     :rollo_rendtall,
@@ -93,8 +91,6 @@ export async function insertarRendTalla(data) {
             `,
             {
                 cod_talla: data.codTalla,
-                nom_talla: data.nomTalla,
-                esta_talla: data.estaTalla,
                 ancho_rendtall: data.anchoRendtall,
                 peso_rendtall: data.pesoRendtall,
                 rollo_rendtall: data.rolloRendtall,
@@ -125,8 +121,6 @@ export async function actualizarRendTalla(codTalla, data) {
             BEGIN
                 PKG_RENDTALLA.actualizarRendTalla(
                     :cod_talla,
-                    :nom_talla,
-                    :esta_talla,
                     :ancho_rendtall,
                     :peso_rendtall,
                     :rollo_rendtall,
@@ -136,8 +130,6 @@ export async function actualizarRendTalla(codTalla, data) {
             `,
             {
                 cod_talla: codTalla,
-                nom_talla: data.nomTalla,
-                esta_talla: data.estaTalla,
                 ancho_rendtall: data.anchoRendtall,
                 peso_rendtall: data.pesoRendtall,
                 rollo_rendtall: data.rolloRendtall,
