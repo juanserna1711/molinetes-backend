@@ -69,11 +69,17 @@ export function handleError(error, res, defaultMessage) {
             field: 'periMolinete',
             message: 'El perímetro del molinete no es válido, debe estar entre 1 y 999.'
         },
-        
+
         20012: {
             status: 409,
             field: null,
             message: 'La talla ya tiene información de rendimiento asociada.'
+        },
+
+        20013: {
+            status: 400,
+            field: 'rollos',
+            message: 'La cantidad de rollos debe ser mayor que cero.'
         }
     };
 

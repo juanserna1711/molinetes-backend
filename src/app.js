@@ -7,6 +7,7 @@ import tallasRoutes from './routes/tallas.routes.js';
 import rendtallasRoutes from './routes/rendtallas.routes.js';
 import usuariosRoutes from './routes/usuarios.routes.js';
 import molinetesRoutes from './routes/molinetes.routes.js'
+import tigimoliRoutes from './routes/tigimoli.routes.js'
 
 dotenv.config();
 
@@ -40,6 +41,8 @@ app.use('/api/usuarios', usuariosRoutes);
 
 app.use('/api/molinetes', molinetesRoutes);
 
+app.use('/api/tigimoli', tigimoliRoutes);
+
 
 async function startServer() {
 
@@ -58,6 +61,7 @@ async function startServer() {
             console.log(`Rendimiento x Talla: http://localhost:${PORT}/api/rendtallas`);
             console.log(`Usuarios: http://localhost:${PORT}/api/usuarios`);
             console.log(`Molinetes: http://localhost:${PORT}/api/molinetes`);
+            console.log(`Tigimoli: http://localhost:${PORT}/api/tigimoli`)
             console.log('======================================');
 
         });
