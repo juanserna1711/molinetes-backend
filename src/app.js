@@ -2,7 +2,7 @@
   Nombre responsabilidad: Inicializar la API de MOLIPLUS
 
   Autor: JUAN ANDRES SERNA CASTRO
-  Fecha_creacion: No especificada
+  Fecha_creacion: 22/Septiembre/2026
 
   Descripcion responsabilidad:
   Configura Express, carga dotenv y registra los recursos de tallas, rendimientos, usuarios, molinetes y TIGIMOLI.

@@ -2,7 +2,7 @@
   Nombre responsabilidad: Traducir errores de Oracle a respuestas HTTP
 
   Autor: JUAN ANDRES SERNA CASTRO
-  Fecha_creacion: No especificada
+  Fecha_creacion: 22/Septiembre/2026
 
   Descripcion responsabilidad:
   Centraliza los mensajes de negocio usados por los controladores.

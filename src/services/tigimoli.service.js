@@ -2,7 +2,7 @@
   Nombre responsabilidad: Acceso Oracle para cálculos TIGIMOLI
 
   Autor: JUAN ANDRES SERNA CASTRO
-  Fecha_creacion: No especificada
+  Fecha_creacion: 22/Septiembre/2026
 
   Descripcion responsabilidad:
   Ejecuta los procedimientos de PKG_TIGIMOLI desde los controladores del recurso.

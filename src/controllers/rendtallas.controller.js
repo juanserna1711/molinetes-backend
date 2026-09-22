@@ -2,7 +2,7 @@
   Nombre responsabilidad: Adaptar solicitudes HTTP de rendimientos por talla
 
   Autor: JUAN ANDRES SERNA CASTRO
-  Fecha_creacion: No especificada
+  Fecha_creacion: 22/Septiembre/2026
 
   Descripcion responsabilidad:
   Traduce req a llamadas de rendtallas.service.js y entrega respuestas JSON.
