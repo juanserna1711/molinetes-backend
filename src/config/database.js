@@ -1,3 +1,19 @@
+/*=============================================================================
+  Nombre responsabilidad: Administrar el pool de conexiones Oracle
+
+  Autor: JUAN ANDRES SERNA CASTRO
+  Fecha_creacion: No especificada
+
+  Descripcion responsabilidad:
+  Lee la configuración mediante dotenv y comparte el pool entre los servicios.
+
+  Historial_modificaciones:
+
+  Autor:
+  Fecha:
+  Descripcion:
+=============================================================================*/
+
 import oracledb from 'oracledb';
 import dotenv from 'dotenv';
 
@@ -15,6 +31,9 @@ const poolConfig = {
 
 let pool;
 
+/*
+  Inicializa el pool de conexiones Oracle.
+*/
 export async function initDatabase() {
     try {
         pool = await oracledb.createPool(poolConfig);
@@ -26,6 +45,9 @@ export async function initDatabase() {
     }
 }
 
+/*
+  Obtiene una conexión disponible para las operaciones de datos.
+*/
 export async function getConnection() {
     if (!pool) {
         throw new Error('El pool de conexiones Oracle no ha sido inicializado.');
@@ -34,6 +56,9 @@ export async function getConnection() {
     return await pool.getConnection();
 }
 
+/*
+  Cierra el pool de conexiones Oracle.
+*/
 export async function closeDatabase() {
     if (pool) {
         await pool.close(10);

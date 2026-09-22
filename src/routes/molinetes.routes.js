@@ -1,3 +1,19 @@
+/*=============================================================================
+  Nombre responsabilidad: Enrutamiento HTTP de molinetes
+
+  Autor: JUAN ANDRES SERNA CASTRO
+  Fecha_creacion: No especificada
+
+  Descripcion responsabilidad:
+  Relaciona los endpoints del recurso con molinetes.controller.js.
+
+  Historial_modificaciones:
+
+  Autor:
+  Fecha:
+  Descripcion:
+=============================================================================*/
+
 import { Router } from 'express';
 
 import {

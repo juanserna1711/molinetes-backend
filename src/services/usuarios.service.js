@@ -1,10 +1,26 @@
+/*=============================================================================
+  Nombre responsabilidad: Acceso Oracle para usuarios
+
+  Autor: JUAN ANDRES SERNA CASTRO
+  Fecha_creacion: No especificada
+
+  Descripcion responsabilidad:
+  Ejecuta los procedimientos de PKG_USUARIO desde los controladores del recurso.
+
+  Historial_modificaciones:
+
+  Autor:
+  Fecha:
+  Descripcion:
+=============================================================================*/
+
 import oracledb from 'oracledb';
 import { getConnection } from '../config/database.js';
 
 
-/**
- * Consulta USUARIO.
- */
+/*
+  Consulta los usuarios utilizando los filtros recibidos.
+*/
 export async function consultarUsuarios({
     codUsuario = null,
     nomUsuario = null,
@@ -60,9 +76,9 @@ export async function consultarUsuarios({
 }
 
 
-/**
- * Inserta un USUARIO.
- */
+/*
+  Registra un nuevo usuario con la información recibida.
+*/
 export async function insertarUsuario(data) {
 
     let connection;
@@ -97,9 +113,9 @@ export async function insertarUsuario(data) {
 }
 
 
-/**
- * Actualiza USUARIO.
- */
+/*
+  Actualiza la información del usuario seleccionado.
+*/
 export async function actualizarUsuario(codUsuario, data) {
 
     let connection;
@@ -134,9 +150,9 @@ export async function actualizarUsuario(codUsuario, data) {
 }
 
 
-/**
- * Activa un USUARIO.
- */
+/*
+  Activa el registro correspondiente al código recibido.
+*/
 export async function activarUsuario(codUsuario) {
 
     let connection;
@@ -163,9 +179,9 @@ export async function activarUsuario(codUsuario) {
 }
 
 
-/**
- * Desactiva un USUARIO.
- */
+/*
+  Desactiva el registro correspondiente al código recibido.
+*/
 export async function desactivarUsuario(codUsuario) {
 
     let connection;
@@ -191,9 +207,9 @@ export async function desactivarUsuario(codUsuario) {
     }
 }
 
-/**
- * Elimina un USUARIO.
- */
+/*
+  Elimina el usuario correspondiente al código recibido.
+*/
 export async function eliminarUsuario(codUsuario) {
 
     let connection;

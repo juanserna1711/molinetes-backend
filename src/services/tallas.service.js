@@ -1,10 +1,26 @@
+/*=============================================================================
+  Nombre responsabilidad: Acceso Oracle para tallas
+
+  Autor: JUAN ANDRES SERNA CASTRO
+  Fecha_creacion: No especificada
+
+  Descripcion responsabilidad:
+  Ejecuta los procedimientos de PKG_TALLA desde los controladores del recurso.
+
+  Historial_modificaciones:
+
+  Autor:
+  Fecha:
+  Descripcion:
+=============================================================================*/
+
 import oracledb from 'oracledb';
 import { getConnection } from '../config/database.js';
 
 
-/**
- * Consulta TALLA.
- */
+/*
+  Consulta los tallas utilizando los filtros recibidos.
+*/
 export async function consultarTallas({
     codTalla = null,
     nomTalla = null,
@@ -60,9 +76,9 @@ export async function consultarTallas({
 }
 
 
-/**
- * Inserta una TALLA.
- */
+/*
+  Registra un nuevo talla con la información recibida.
+*/
 export async function insertarTalla(data) {
 
     let connection;
@@ -95,9 +111,9 @@ export async function insertarTalla(data) {
 }
 
 
-/**
- * Actualiza TALLA.
- */
+/*
+  Actualiza la información del talla seleccionado.
+*/
 export async function actualizarTalla(codTalla, data) {
 
     let connection;
@@ -130,9 +146,9 @@ export async function actualizarTalla(codTalla, data) {
 }
 
 
-/**
- * Activa una TALLA.
- */
+/*
+  Activa el registro correspondiente al código recibido.
+*/
 export async function activarTalla(codTalla) {
 
     let connection;
@@ -159,9 +175,9 @@ export async function activarTalla(codTalla) {
 }
 
 
-/**
- * Desactiva una TALLA.
- */
+/*
+  Desactiva el registro correspondiente al código recibido.
+*/
 export async function desactivarTalla(codTalla) {
 
     let connection;
@@ -187,9 +203,9 @@ export async function desactivarTalla(codTalla) {
     }
 }
 
-/**
- * Elimina una TALLA.
- */
+/*
+  Elimina el talla correspondiente al código recibido.
+*/
 export async function eliminarTalla(codTalla) {
 
     let connection;

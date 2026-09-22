@@ -1,10 +1,26 @@
+/*=============================================================================
+  Nombre responsabilidad: Acceso Oracle para rendimientos por talla
+
+  Autor: JUAN ANDRES SERNA CASTRO
+  Fecha_creacion: No especificada
+
+  Descripcion responsabilidad:
+  Ejecuta los procedimientos de PKG_RENDTALLA desde los controladores del recurso.
+
+  Historial_modificaciones:
+
+  Autor:
+  Fecha:
+  Descripcion:
+=============================================================================*/
+
 import oracledb from 'oracledb';
 import { getConnection } from '../config/database.js';
 
 
-/**
- * Consulta TALLA y su información de RENDTALL asociada.
- */
+/*
+  Consulta los rendimientos por talla utilizando los filtros recibidos.
+*/
 export async function consultarRendTallas({
     codTalla = null,
     nomTalla = null,
@@ -67,9 +83,9 @@ export async function consultarRendTallas({
 }
 
 
-/**
- * Inserta una TALLA y su RENDTALL asociado.
- */
+/*
+  Registra un nuevo rendimiento por talla con la información recibida.
+*/
 export async function insertarRendTalla(data) {
 
     let connection;
@@ -106,9 +122,9 @@ export async function insertarRendTalla(data) {
 }
 
 
-/**
- * Actualiza RENDTALL y su TALLA asociada.
- */
+/*
+  Actualiza la información del rendimiento por talla seleccionado.
+*/
 export async function actualizarRendTalla(codTalla, data) {
 
     let connection;
@@ -144,9 +160,9 @@ export async function actualizarRendTalla(codTalla, data) {
     }
 }
 
-/**
- * Elimina una TALLA y su RENDTALL asociado.
- */
+/*
+  Elimina el rendimiento por talla correspondiente al código recibido.
+*/
 export async function eliminarRendTalla(codTalla) {
 
     let connection;

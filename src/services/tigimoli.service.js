@@ -1,10 +1,26 @@
+/*=============================================================================
+  Nombre responsabilidad: Acceso Oracle para cálculos TIGIMOLI
+
+  Autor: JUAN ANDRES SERNA CASTRO
+  Fecha_creacion: No especificada
+
+  Descripcion responsabilidad:
+  Ejecuta los procedimientos de PKG_TIGIMOLI desde los controladores del recurso.
+
+  Historial_modificaciones:
+
+  Autor:
+  Fecha:
+  Descripcion:
+=============================================================================*/
+
 import oracledb from 'oracledb';
 import { getConnection } from '../config/database.js';
 
 
-/**
- * Consulta TIGIMOLI.
- */
+/*
+  Consulta los cálculos TIGIMOLI utilizando los filtros recibidos.
+*/
 export async function consultarTigimoli({
     codMoli = null,
     nomMoli = null,
@@ -93,9 +109,9 @@ export async function consultarTigimoli({
 }
 
 
-/**
- * Consulta el detalle de TIGIMOLI.
- */
+/*
+  Consulta el detalle del cálculo seleccionado.
+*/
 export async function consultarDetalleTigimoli({
     codMoli,
     fechaGeneracion
@@ -159,39 +175,57 @@ export async function consultarDetalleTigimoli({
     }
 }
 
-
-/**
- * Inserta TIGIMOLI.
- */
-export async function insertarTigimoli(data) {
+/*
+  Registra un nuevo cálculo TIGIMOLI con la información recibida.
+*/
+export async function registrarCalculoTigimoli(data) {
 
     let connection;
 
     try {
+
         connection = await getConnection();
 
         await connection.execute(
             `
             BEGIN
-                PKG_TIGIMOLI.insertarTigimoli(
-                    :cod_moli,
-                    :cod_talla,
-                    :rollos,
+                PKG_TIGIMOLI.registrarCalculoTigimoli(
+                    :codigos_molinetes,
+                    :codigos_tallas,
+                    :cantidades_rollos,
                     :usuario
                 );
             END;
             `,
             {
-                cod_moli: data.codMoli,
-                cod_talla: data.codTalla,
-                rollos: data.rollos,
+                codigos_molinetes: {
+                    type: oracledb.NUMBER,
+                    dir: oracledb.BIND_IN,
+                    val: data.codigosMolinetes
+                },
+
+                codigos_tallas: {
+                    type: oracledb.NUMBER,
+                    dir: oracledb.BIND_IN,
+                    val: data.codigosTallas
+                },
+
+                cantidades_rollos: {
+                    type: oracledb.NUMBER,
+                    dir: oracledb.BIND_IN,
+                    val: data.cantidadesRollos
+                },
+
                 usuario: data.usuario
             }
         );
 
     } finally {
+
         if (connection) {
             await connection.close();
         }
+
     }
+
 }

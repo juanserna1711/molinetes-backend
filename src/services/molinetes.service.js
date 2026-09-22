@@ -1,10 +1,26 @@
+/*=============================================================================
+  Nombre responsabilidad: Acceso Oracle para molinetes
+
+  Autor: JUAN ANDRES SERNA CASTRO
+  Fecha_creacion: No especificada
+
+  Descripcion responsabilidad:
+  Ejecuta los procedimientos de PKG_MOLINETE desde los controladores del recurso.
+
+  Historial_modificaciones:
+
+  Autor:
+  Fecha:
+  Descripcion:
+=============================================================================*/
+
 import oracledb from 'oracledb';
 import { getConnection } from '../config/database.js';
 
 
-/**
- * Consulta MOLINETE.
- */
+/*
+  Consulta los molinetes utilizando los filtros recibidos.
+*/
 export async function consultarMolinetes({
     codMolinete = null,
     nomMolinete = null
@@ -57,9 +73,9 @@ export async function consultarMolinetes({
 }
 
 
-/**
- * Inserta un MOLINETE.
- */
+/*
+  Registra un nuevo molinete con la información recibida.
+*/
 export async function insertarMolinete(data) {
 
     let connection;
@@ -94,9 +110,9 @@ export async function insertarMolinete(data) {
 }
 
 
-/**
- * Actualiza MOLINETE.
- */
+/*
+  Actualiza la información del molinete seleccionado.
+*/
 export async function actualizarMolinete(codMolinete, data) {
 
     let connection;
@@ -131,9 +147,9 @@ export async function actualizarMolinete(codMolinete, data) {
 }
 
 
-/**
- * Elimina un MOLINETE.
- */
+/*
+  Elimina el molinete correspondiente al código recibido.
+*/
 export async function eliminarMolinete(codMolinete) {
 
     let connection;

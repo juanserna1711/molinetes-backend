@@ -1,3 +1,19 @@
+/*=============================================================================
+  Nombre responsabilidad: Enrutamiento HTTP de tallas
+
+  Autor: JUAN ANDRES SERNA CASTRO
+  Fecha_creacion: No especificada
+
+  Descripcion responsabilidad:
+  Relaciona los endpoints del recurso con tallas.controller.js.
+
+  Historial_modificaciones:
+
+  Autor:
+  Fecha:
+  Descripcion:
+=============================================================================*/
+
 import { Router } from 'express';
 
 import {

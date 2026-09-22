@@ -1,3 +1,19 @@
+/*=============================================================================
+  Nombre responsabilidad: Adaptar solicitudes HTTP de tallas
+
+  Autor: JUAN ANDRES SERNA CASTRO
+  Fecha_creacion: No especificada
+
+  Descripcion responsabilidad:
+  Traduce req a llamadas de tallas.service.js y entrega respuestas JSON.
+
+  Historial_modificaciones:
+
+  Autor:
+  Fecha:
+  Descripcion:
+=============================================================================*/
+
 import {
     consultarTallas,
     insertarTalla,
@@ -10,6 +26,9 @@ import {
 import { handleError } from '../utils/handleError.js';
 
 
+/*
+  Atiende la consulta del recurso y entrega los resultados al cliente.
+*/
 export async function consultar(req, res) {
     try {
         const { codigo, nombre, estado } = req.query;
@@ -34,6 +53,9 @@ export async function consultar(req, res) {
     }
 }
 
+/*
+  Atiende el registro de los datos recibidos y comunica el resultado.
+*/
 export async function crear(req, res) {
     try {
         await insertarTalla(req.body);
@@ -53,6 +75,9 @@ export async function crear(req, res) {
 }
 
 
+/*
+  Atiende la actualización del registro indicado.
+*/
 export async function actualizar(req, res) {
     try {
         const codTalla = Number(req.params.codigo);
@@ -73,6 +98,9 @@ export async function actualizar(req, res) {
     }
 }
 
+/*
+  Atiende la activación del registro indicado.
+*/
 export async function activar(req, res) {
     try {
         const codTalla = Number(req.params.codigo);
@@ -94,6 +122,9 @@ export async function activar(req, res) {
 }
 
 
+/*
+  Atiende la desactivación del registro indicado.
+*/
 export async function desactivar(req, res) {
     try {
         const codTalla = Number(req.params.codigo);
@@ -114,6 +145,9 @@ export async function desactivar(req, res) {
     }
 }
 
+/*
+  Atiende la eliminación del registro indicado.
+*/
 export async function eliminar(req, res) {
     try {
         const codTalla = Number(req.params.codigo);

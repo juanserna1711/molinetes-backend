@@ -1,3 +1,19 @@
+/*=============================================================================
+  Nombre responsabilidad: Inicializar la API de MOLIPLUS
+
+  Autor: JUAN ANDRES SERNA CASTRO
+  Fecha_creacion: No especificada
+
+  Descripcion responsabilidad:
+  Configura Express, carga dotenv y registra los recursos de tallas, rendimientos, usuarios, molinetes y TIGIMOLI.
+
+  Historial_modificaciones:
+
+  Autor:
+  Fecha:
+  Descripcion:
+=============================================================================*/
+
 import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
@@ -16,12 +32,16 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 
 
-// Middlewares
+/*
+  Middlewares
+*/
 app.use(cors());
 app.use(express.json());
 
 
-// Ruta de prueba
+/*
+  Ruta de prueba
+*/
 app.get('/health', (req, res) => {
 
     res.status(200).json({
@@ -32,7 +52,9 @@ app.get('/health', (req, res) => {
 });
 
 
-// Rutas
+/*
+  Rutas
+*/
 app.use('/api/tallas', tallasRoutes);
 
 app.use('/api/rendtallas', rendtallasRoutes);
@@ -44,6 +66,9 @@ app.use('/api/molinetes', molinetesRoutes);
 app.use('/api/tigimoli', tigimoliRoutes);
 
 
+/*
+  Inicializa la conexión con Oracle y pone en marcha el servidor.
+*/
 async function startServer() {
 
     try {
@@ -76,6 +101,9 @@ async function startServer() {
 }
 
 
+/*
+  Cierra las conexiones de base de datos y termina el proceso.
+*/
 async function shutdown() {
 
     console.log('Cerrando servidor...');

@@ -1,3 +1,21 @@
+/*=============================================================================
+  Nombre responsabilidad: Traducir errores de Oracle a respuestas HTTP
+
+  Autor: JUAN ANDRES SERNA CASTRO
+  Fecha_creacion: No especificada
+
+  Descripcion responsabilidad:
+  Centraliza los mensajes de negocio usados por los controladores.
+
+  Historial_modificaciones:
+
+  Autor:
+  Fecha:
+  Descripcion:
+=============================================================================*/
+/*
+  Convierte los errores reconocidos en mensajes para el cliente y usa un mensaje general para los demás.
+*/
 export function handleError(error, res, defaultMessage) {
     console.error(error);
 
@@ -80,6 +98,16 @@ export function handleError(error, res, defaultMessage) {
             status: 400,
             field: 'rollos',
             message: 'La cantidad de rollos debe ser mayor que cero.'
+        },
+        20014: {
+            status: 400,
+            field: null,
+            message: 'Los datos del cálculo no son consistentes.'
+        },
+        20015: {
+            status: 400,
+            field: null,
+            message: 'El cálculo debe contener al menos un registro.'
         }
     };
 
