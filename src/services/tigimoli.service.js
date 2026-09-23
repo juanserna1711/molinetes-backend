@@ -17,14 +17,13 @@
 import oracledb from 'oracledb';
 import { getConnection } from '../config/database.js';
 
-
 /*
   Consulta los cálculos TIGIMOLI utilizando los filtros recibidos.
 */
 export async function consultarTigimoli({
-    codMoli = null,
-    nomMoli = null,
-    fechaGeneracion = null,
+    codigosMolinetes = null,
+    fechaInicio = null,
+    fechaFin = null,
     pagina = 1,
     registrosPagina = 10
 } = {}) {
@@ -36,17 +35,26 @@ export async function consultarTigimoli({
 
         connection = await getConnection();
 
-        const fecha = fechaGeneracion
-            ? new Date(`${fechaGeneracion}T00:00:00`)
+        const codigos = Array.isArray(codigosMolinetes)
+            && codigosMolinetes.length > 0
+            ? codigosMolinetes.join(',')
+            : null;
+
+        const inicio = fechaInicio
+            ? new Date(`${fechaInicio}T00:00:00`)
+            : null;
+
+        const fin = fechaFin
+            ? new Date(`${fechaFin}T00:00:00`)
             : null;
 
         result = await connection.execute(
             `
             BEGIN
                 PKG_TIGIMOLI.consultaTigimoli(
-                    :cod_moli,
-                    :nom_moli,
-                    :fecha_generacion,
+                    :codigos_molinetes,
+                    :fecha_inicio,
+                    :fecha_fin,
                     :pagina,
                     :registros_pagina,
                     :total_registros,
@@ -55,14 +63,22 @@ export async function consultarTigimoli({
             END;
             `,
             {
-                cod_moli: codMoli,
+                codigos_molinetes: {
+                    dir: oracledb.BIND_IN,
+                    type: oracledb.STRING,
+                    val: codigos
+                },
 
-                nom_moli: nomMoli,
-
-                fecha_generacion: {
+                fecha_inicio: {
                     dir: oracledb.BIND_IN,
                     type: oracledb.DATE,
-                    val: fecha
+                    val: inicio
+                },
+
+                fecha_fin: {
+                    dir: oracledb.BIND_IN,
+                    type: oracledb.DATE,
+                    val: fin
                 },
 
                 pagina: pagina,
@@ -102,12 +118,13 @@ export async function consultarTigimoli({
         };
 
     } finally {
+
         if (connection) {
             await connection.close();
         }
+
     }
 }
-
 
 /*
   Consulta el detalle del cálculo seleccionado.

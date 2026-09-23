@@ -22,7 +22,6 @@ import {
 
 import { handleError } from '../utils/handleError.js';
 
-
 /*
   Atiende la consulta del recurso y entrega los resultados al cliente.
 */
@@ -31,17 +30,24 @@ export async function consultar(req, res) {
     try {
 
         const {
-            codigo,
-            nombre,
-            fecha,
+            molinetes,
+            fechaInicio,
+            fechaFin,
             pagina,
             registrosPagina
         } = req.query;
 
+        const codigosMolinetes = molinetes
+            ? molinetes
+                .split(',')
+                .map(Number)
+                .filter(Number.isFinite)
+            : [];
+
         const tigimoli = await consultarTigimoli({
-            codMoli: codigo ? Number(codigo) : null,
-            nomMoli: nombre || null,
-            fechaGeneracion: fecha || null,
+            codigosMolinetes,
+            fechaInicio: fechaInicio || null,
+            fechaFin: fechaFin || null,
             pagina: pagina ? Number(pagina) : 1,
             registrosPagina: registrosPagina
                 ? Number(registrosPagina)

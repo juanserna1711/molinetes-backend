@@ -108,6 +108,16 @@ export function handleError(error, res, defaultMessage) {
             status: 400,
             field: null,
             message: 'El cálculo debe contener al menos un registro.'
+        },
+        20016: {
+            status: 400,
+            field: null,
+            message: 'No se puede eliminar la talla porque tiene cálculos de tiempo de giro asociados.'
+        },
+        20017: {
+            status: 400,
+            field: null,
+            message: 'No se puede eliminar el molinete porque tiene cálculos de tiempo de giro asociados.'
         }
     };
 
