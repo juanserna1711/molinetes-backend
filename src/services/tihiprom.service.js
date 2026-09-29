@@ -1,11 +1,11 @@
 /*=============================================================================
-  Nombre responsabilidad: Acceso Oracle para tallas
+  Nombre responsabilidad: Acceso Oracle para promedios por tipo de hilaza
 
   Autor: JUAN ANDRES SERNA CASTRO
-  Fecha_creacion: 22/Septiembre/2026
+  Fecha_creacion: 24/Septiembre/2026
 
   Descripcion responsabilidad:
-  Ejecuta los procedimientos de PKG_TALLA desde los controladores del recurso.
+  Ejecuta los procedimientos de PKG_TIHIPROM desde los controladores del recurso.
 
   Historial_modificaciones:
 
@@ -18,12 +18,11 @@ import oracledb from 'oracledb';
 import { getConnection } from '../config/database.js';
 
 /*
-  Consulta los tallas utilizando los filtros recibidos.
+  Consulta los promedios por tipo de hilaza utilizando los filtros recibidos.
 */
-export async function consultarTallas({
-    codTalla = null,
-    nomTalla = null,
-    estaTalla = null
+export async function consultarTiHiProm({
+    codTipoHilaza = null,
+    codTalla = null
 } = {}) {
 
     let connection;
@@ -35,18 +34,16 @@ export async function consultarTallas({
         result = await connection.execute(
             `
             BEGIN
-                PKG_TALLA.consultaTalla(
+                PKG_TIHIPROM.consultaTiHiProm(
+                    :cod_tipo_hilaza,
                     :cod_talla,
-                    :nom_talla,
-                    :esta_talla,
                     :cursor
                 );
             END;
             `,
             {
+                cod_tipo_hilaza: codTipoHilaza,
                 cod_talla: codTalla,
-                nom_talla: nomTalla,
-                esta_talla: estaTalla,
 
                 cursor: {
                     dir: oracledb.BIND_OUT,
@@ -62,9 +59,15 @@ export async function consultarTallas({
         await resultSet.close();
 
         return rows.map(row => ({
-            codigo: row[0],
-            nombre: row[1],
-            estado: row[2]
+            codigoTipoHilaza: row[0],
+            nombreTipoHilaza: row[1],
+            codigoTalla: row[2],
+            nombreTalla: row[3],
+            peso: row[4],
+            ancho: row[5],
+            promedio: row[6],
+            fechaGeneracion: row[7],
+            usuario: row[8]
         }));
 
     } finally {
@@ -74,11 +77,10 @@ export async function consultarTallas({
     }
 }
 
-
 /*
-  Registra un nuevo talla con la información recibida.
+  Registra nueva información de promedio para un tipo de hilaza y talla.
 */
-export async function insertarTalla(data) {
+export async function insertarTiHiProm(data) {
 
     let connection;
 
@@ -88,17 +90,21 @@ export async function insertarTalla(data) {
         await connection.execute(
             `
             BEGIN
-                PKG_TALLA.insertarTalla(
+                PKG_TIHIPROM.insertarTiHiProm(
+                    :cod_tipo_hilaza,
                     :cod_talla,
-                    :nom_talla,
-                    :esta_talla
+                    :peso_tihiprom,
+                    :ancho_tihiprom,
+                    :usuario_tihiprom
                 );
             END;
             `,
             {
+                cod_tipo_hilaza: data.codTipoHilaza,
                 cod_talla: data.codTalla,
-                nom_talla: data.nomTalla,
-                esta_talla: data.estaTalla
+                peso_tihiprom: data.pesoTiHiProm,
+                ancho_tihiprom: data.anchoTiHiProm,
+                usuario_tihiprom: data.usuarioTiHiProm
             }
         );
 
@@ -110,9 +116,13 @@ export async function insertarTalla(data) {
 }
 
 /*
-  Actualiza la información del talla seleccionado.
+  Actualiza la información de promedio del tipo de hilaza y talla seleccionados.
 */
-export async function actualizarTalla(codTalla, data) {
+export async function actualizarTiHiProm(
+    codTipoHilaza,
+    codTalla,
+    data
+) {
 
     let connection;
 
@@ -122,17 +132,21 @@ export async function actualizarTalla(codTalla, data) {
         await connection.execute(
             `
             BEGIN
-                PKG_TALLA.actualizarTalla(
+                PKG_TIHIPROM.actualizarTiHiProm(
+                    :cod_tipo_hilaza,
                     :cod_talla,
-                    :nom_talla,
-                    :esta_talla
+                    :peso_tihiprom,
+                    :ancho_tihiprom,
+                    :usuario_tihiprom
                 );
             END;
             `,
             {
+                cod_tipo_hilaza: codTipoHilaza,
                 cod_talla: codTalla,
-                nom_talla: data.nomTalla,
-                esta_talla: data.estaTalla
+                peso_tihiprom: data.pesoTiHiProm,
+                ancho_tihiprom: data.anchoTiHiProm,
+                usuario_tihiprom: data.usuarioTiHiProm
             }
         );
 
@@ -144,9 +158,12 @@ export async function actualizarTalla(codTalla, data) {
 }
 
 /*
-  Activa el registro correspondiente al código recibido.
+  Elimina la información correspondiente al tipo de hilaza y talla recibidos.
 */
-export async function activarTalla(codTalla) {
+export async function eliminarTiHiProm(
+    codTipoHilaza,
+    codTalla
+) {
 
     let connection;
 
@@ -156,10 +173,14 @@ export async function activarTalla(codTalla) {
         await connection.execute(
             `
             BEGIN
-                PKG_TALLA.activarTalla(:cod_talla);
+                PKG_TIHIPROM.eliminarTiHiProm(
+                    :cod_tipo_hilaza,
+                    :cod_talla
+                );
             END;
             `,
             {
+                cod_tipo_hilaza: codTipoHilaza,
                 cod_talla: codTalla
             }
         );
@@ -172,9 +193,12 @@ export async function activarTalla(codTalla) {
 }
 
 /*
-  Desactiva el registro correspondiente al código recibido.
+  Aplica en RENDTALL la parametrización del tipo de hilaza seleccionado.
 */
-export async function desactivarTalla(codTalla) {
+export async function aplicarTipoHilaza(
+    codTipoHilaza,
+    usuarioRendtall
+) {
 
     let connection;
 
@@ -184,39 +208,15 @@ export async function desactivarTalla(codTalla) {
         await connection.execute(
             `
             BEGIN
-                PKG_TALLA.desactivarTalla(:cod_talla);
+                PKG_TIHIPROM.aplicarTipoHilaza(
+                    :cod_tipo_hilaza,
+                    :usuario_rendtall
+                );
             END;
             `,
             {
-                cod_talla: codTalla
-            }
-        );
-
-    } finally {
-        if (connection) {
-            await connection.close();
-        }
-    }
-}
-
-/*
-  Elimina el talla correspondiente al código recibido.
-*/
-export async function eliminarTalla(codTalla) {
-
-    let connection;
-
-    try {
-        connection = await getConnection();
-
-        await connection.execute(
-            `
-            BEGIN
-                PKG_TALLA.eliminarTalla(:cod_talla);
-            END;
-            `,
-            {
-                cod_talla: codTalla
+                cod_tipo_hilaza: codTipoHilaza,
+                usuario_rendtall: usuarioRendtall
             }
         );
 

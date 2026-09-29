@@ -22,8 +22,11 @@ import { initDatabase, closeDatabase } from './config/database.js';
 import tallasRoutes from './routes/tallas.routes.js';
 import rendtallasRoutes from './routes/rendtallas.routes.js';
 import usuariosRoutes from './routes/usuarios.routes.js';
-import molinetesRoutes from './routes/molinetes.routes.js'
-import tigimoliRoutes from './routes/tigimoli.routes.js'
+import molinetesRoutes from './routes/molinetes.routes.js';
+import tigimoliRoutes from './routes/tigimoli.routes.js';
+import tipohilazaRoutes from './routes/tipohilaza.routes.js';
+import tihipromRoutes from './routes/tihiprom.routes.js';
+import ordeprodRoutes from './routes/ordeprod.routes.js'
 
 dotenv.config();
 
@@ -65,6 +68,12 @@ app.use('/api/molinetes', molinetesRoutes);
 
 app.use('/api/tigimoli', tigimoliRoutes);
 
+app.use('/api/tipohilaza', tipohilazaRoutes);
+
+app.use('/api/tihiprom', tihipromRoutes);
+
+app.use('/api/ordeprod', ordeprodRoutes);
+
 
 /*
   Inicializa la conexión con Oracle y pone en marcha el servidor.
@@ -86,7 +95,10 @@ async function startServer() {
             console.log(`Rendimiento x Talla: http://localhost:${PORT}/api/rendtallas`);
             console.log(`Usuarios: http://localhost:${PORT}/api/usuarios`);
             console.log(`Molinetes: http://localhost:${PORT}/api/molinetes`);
-            console.log(`Tigimoli: http://localhost:${PORT}/api/tigimoli`)
+            console.log(`Tigimoli: http://localhost:${PORT}/api/tigimoli`);
+            console.log(`Tipos Hilaza: http://localhost:${PORT}/api/tipohilaza`);
+            console.log(`Tipos Hilaza Prom: http://localhost:${PORT}/api/tihiprom`);
+            console.log(`Orden Produccion: http://localhost:${PORT}/api/ordeprod`);
             console.log('======================================');
 
         });

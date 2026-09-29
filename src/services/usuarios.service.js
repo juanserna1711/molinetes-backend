@@ -17,7 +17,6 @@
 import oracledb from 'oracledb';
 import { getConnection } from '../config/database.js';
 
-
 /*
   Consulta los usuarios utilizando los filtros recibidos.
 */
@@ -75,7 +74,6 @@ export async function consultarUsuarios({
     }
 }
 
-
 /*
   Registra un nuevo usuario con la información recibida.
 */
@@ -111,7 +109,6 @@ export async function insertarUsuario(data) {
         }
     }
 }
-
 
 /*
   Actualiza la información del usuario seleccionado.
@@ -149,7 +146,6 @@ export async function actualizarUsuario(codUsuario, data) {
     }
 }
 
-
 /*
   Activa el registro correspondiente al código recibido.
 */
@@ -177,7 +173,6 @@ export async function activarUsuario(codUsuario) {
         }
     }
 }
-
 
 /*
   Desactiva el registro correspondiente al código recibido.

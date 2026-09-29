@@ -1,11 +1,11 @@
 /*=============================================================================
-  Nombre responsabilidad: Acceso Oracle para molinetes
+  Nombre responsabilidad: Acceso Oracle para tipos de hilaza
 
   Autor: JUAN ANDRES SERNA CASTRO
-  Fecha_creacion: 22/Septiembre/2026
+  Fecha_creacion: 24/Septiembre/2026
 
   Descripcion responsabilidad:
-  Ejecuta los procedimientos de PKG_MOLINETE desde los controladores del recurso.
+  Ejecuta los procedimientos de PKG_TIPOHILA desde los controladores del recurso.
 
   Historial_modificaciones:
 
@@ -18,11 +18,11 @@ import oracledb from 'oracledb';
 import { getConnection } from '../config/database.js';
 
 /*
-  Consulta los molinetes utilizando los filtros recibidos.
+  Consulta los tipos de hilaza utilizando los filtros recibidos.
 */
-export async function consultarMolinetes({
-    codMolinete = null,
-    nomMolinete = null
+export async function consultarTiposHilaza({
+    codTipoHilaza = null,
+    nomTipoHilaza = null
 } = {}) {
 
     let connection;
@@ -34,16 +34,17 @@ export async function consultarMolinetes({
         result = await connection.execute(
             `
             BEGIN
-                PKG_MOLINETE.consultaMolinete(
-                    :cod_molinete,
-                    :nom_molinete,
+                PKG_TIPOHILA.consultaTipoHilaza(
+                    :cod_tipo_hilaza,
+                    :nom_tipo_hilaza,
                     :cursor
                 );
             END;
             `,
             {
-                cod_molinete: codMolinete,
-                nom_molinete: nomMolinete,
+                cod_tipo_hilaza: codTipoHilaza,
+                nom_tipo_hilaza: nomTipoHilaza,
+
                 cursor: {
                     dir: oracledb.BIND_OUT,
                     type: oracledb.CURSOR
@@ -59,9 +60,7 @@ export async function consultarMolinetes({
 
         return rows.map(row => ({
             codigo: row[0],
-            nombre: row[1],
-            rpm: row[2],
-            perimetro: row [3]
+            nombre: row[1]
         }));
 
     } finally {
@@ -72,9 +71,9 @@ export async function consultarMolinetes({
 }
 
 /*
-  Registra un nuevo molinete con la información recibida.
+  Registra un nuevo tipo de hilaza con la información recibida.
 */
-export async function insertarMolinete(data) {
+export async function insertarTipoHilaza(data) {
 
     let connection;
 
@@ -84,19 +83,15 @@ export async function insertarMolinete(data) {
         await connection.execute(
             `
             BEGIN
-                PKG_MOLINETE.insertarMolinete(
-                    :cod_molinete,
-                    :nom_molinete,
-                    :rpm_molinete,
-                    :peri_molinete
+                PKG_TIPOHILA.insertarTipoHilaza(
+                    :cod_tipo_hilaza,
+                    :nom_tipo_hilaza
                 );
             END;
             `,
             {
-                cod_molinete: data.codMolinete,
-                nom_molinete: data.nomMolinete,
-                rpm_molinete: data.rpmMolinete,
-                peri_molinete: data.periMolinete
+                cod_tipo_hilaza: data.codTipoHilaza,
+                nom_tipo_hilaza: data.nomTipoHilaza
             }
         );
 
@@ -108,9 +103,9 @@ export async function insertarMolinete(data) {
 }
 
 /*
-  Actualiza la información del molinete seleccionado.
+  Actualiza la información del tipo de hilaza seleccionado.
 */
-export async function actualizarMolinete(codMolinete, data) {
+export async function actualizarTipoHilaza(codTipoHilaza, data) {
 
     let connection;
 
@@ -120,19 +115,15 @@ export async function actualizarMolinete(codMolinete, data) {
         await connection.execute(
             `
             BEGIN
-                PKG_MOLINETE.actualizarMolinete(
-                    :cod_molinete,
-                    :nom_molinete,
-                    :rpm_molinete,
-                    :peri_molinete
+                PKG_TIPOHILA.actualizarTipoHilaza(
+                    :cod_tipo_hilaza,
+                    :nom_tipo_hilaza
                 );
             END;
             `,
             {
-                cod_molinete: codMolinete,
-                nom_molinete: data.nomMolinete,
-                rpm_molinete: data.rpmMolinete,
-                peri_molinete: data.periMolinete
+                cod_tipo_hilaza: codTipoHilaza,
+                nom_tipo_hilaza: data.nomTipoHilaza
             }
         );
 
@@ -144,9 +135,9 @@ export async function actualizarMolinete(codMolinete, data) {
 }
 
 /*
-  Elimina el molinete correspondiente al código recibido.
+  Elimina el tipo de hilaza correspondiente al código recibido.
 */
-export async function eliminarMolinete(codMolinete) {
+export async function eliminarTipoHilaza(codTipoHilaza) {
 
     let connection;
 
@@ -156,11 +147,13 @@ export async function eliminarMolinete(codMolinete) {
         await connection.execute(
             `
             BEGIN
-                PKG_MOLINETE.eliminarMolinete(:cod_molinete);
+                PKG_TIPOHILA.eliminarTipoHilaza(
+                    :cod_tipo_hilaza
+                );
             END;
             `,
             {
-                cod_molinete: codMolinete
+                cod_tipo_hilaza: codTipoHilaza
             }
         );
 

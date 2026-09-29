@@ -5,212 +5,45 @@
   Fecha_creacion: 22/Septiembre/2026
 
   Descripcion responsabilidad:
-  Ejecuta los procedimientos de PKG_TIGIMOLI desde los controladores del recurso.
+  Ejecuta el procedimiento de registro de PKG_TIGIMOLI para almacenar
+  el cálculo técnico y generar la respectiva Orden de Trabajo.
 
   Historial_modificaciones:
 
-  Autor:
-  Fecha:
+  Autor: JUAN ANDRES SERNA CASTRO
+  Fecha: 25/Septiembre/2026
   Descripcion:
+  Se elimina la consulta histórica de TIGIMOLI y se ajusta el registro
+  para recibir RPM, tipo de hilaza y retornar el código de la Orden
+  de Trabajo generada.
 =============================================================================*/
 
 import oracledb from 'oracledb';
 import { getConnection } from '../config/database.js';
 
 /*
-  Consulta los cálculos TIGIMOLI utilizando los filtros recibidos.
-*/
-export async function consultarTigimoli({
-    codigosMolinetes = null,
-    fechaInicio = null,
-    fechaFin = null,
-    pagina = 1,
-    registrosPagina = 10
-} = {}) {
-
-    let connection;
-    let result;
-
-    try {
-
-        connection = await getConnection();
-
-        const codigos = Array.isArray(codigosMolinetes)
-            && codigosMolinetes.length > 0
-            ? codigosMolinetes.join(',')
-            : null;
-
-        const inicio = fechaInicio
-            ? new Date(`${fechaInicio}T00:00:00`)
-            : null;
-
-        const fin = fechaFin
-            ? new Date(`${fechaFin}T00:00:00`)
-            : null;
-
-        result = await connection.execute(
-            `
-            BEGIN
-                PKG_TIGIMOLI.consultaTigimoli(
-                    :codigos_molinetes,
-                    :fecha_inicio,
-                    :fecha_fin,
-                    :pagina,
-                    :registros_pagina,
-                    :total_registros,
-                    :cursor
-                );
-            END;
-            `,
-            {
-                codigos_molinetes: {
-                    dir: oracledb.BIND_IN,
-                    type: oracledb.STRING,
-                    val: codigos
-                },
-
-                fecha_inicio: {
-                    dir: oracledb.BIND_IN,
-                    type: oracledb.DATE,
-                    val: inicio
-                },
-
-                fecha_fin: {
-                    dir: oracledb.BIND_IN,
-                    type: oracledb.DATE,
-                    val: fin
-                },
-
-                pagina: pagina,
-
-                registros_pagina: registrosPagina,
-
-                total_registros: {
-                    dir: oracledb.BIND_OUT,
-                    type: oracledb.NUMBER
-                },
-
-                cursor: {
-                    dir: oracledb.BIND_OUT,
-                    type: oracledb.CURSOR
-                }
-            }
-        );
-
-        const resultSet = result.outBinds.cursor;
-
-        const rows = await resultSet.getRows();
-
-        await resultSet.close();
-
-        return {
-            totalRegistros: result.outBinds.total_registros,
-
-            datos: rows.map(row => ({
-                codigoMoli: row[0],
-                nombreMolinete: row[1],
-                fechaGeneracion: row[2],
-                cantidadTallas: row[3],
-                cantidadRollos: row[4],
-                totalMetros: row[5],
-                tiempoGiro: row[6]
-            }))
-        };
-
-    } finally {
-
-        if (connection) {
-            await connection.close();
-        }
-
-    }
-}
-
-/*
-  Consulta el detalle del cálculo seleccionado.
-*/
-export async function consultarDetalleTigimoli({
-    codMoli,
-    fechaGeneracion
-}) {
-
-    let connection;
-    let result;
-
-    try {
-
-        connection = await getConnection();
-
-        const fecha = new Date(fechaGeneracion);
-
-        result = await connection.execute(
-            `
-            BEGIN
-                PKG_TIGIMOLI.consultaDetalleTigimoli(
-                    :cod_moli,
-                    :fecha_generacion,
-                    :cursor
-                );
-            END;
-            `,
-            {
-                cod_moli: codMoli,
-
-                fecha_generacion: {
-                    dir: oracledb.BIND_IN,
-                    type: oracledb.DATE,
-                    val: fecha
-                },
-
-                cursor: {
-                    dir: oracledb.BIND_OUT,
-                    type: oracledb.CURSOR
-                }
-            }
-        );
-
-        const resultSet = result.outBinds.cursor;
-
-        const rows = await resultSet.getRows();
-
-        await resultSet.close();
-
-        return rows.map(row => ({
-            codigoTalla: row[0],
-            nombreTalla: row[1],
-            rollos: row[2],
-            metrosRollo: row[3],
-            totalMetros: row[4]
-        }));
-
-    } finally {
-
-        if (connection) {
-            await connection.close();
-        }
-
-    }
-}
-
-/*
-  Registra un nuevo cálculo TIGIMOLI con la información recibida.
+  Registra un nuevo cálculo TIGIMOLI y genera la respectiva Orden de Trabajo.
 */
 export async function registrarCalculoTigimoli(data) {
 
     let connection;
+    let result;
 
     try {
 
         connection = await getConnection();
 
-        await connection.execute(
+        result = await connection.execute(
             `
             BEGIN
                 PKG_TIGIMOLI.registrarCalculoTigimoli(
                     :codigos_molinetes,
                     :codigos_tallas,
                     :cantidades_rollos,
-                    :usuario
+                    :rpms_molinetes,
+                    :cod_tipo_hilaza,
+                    :usuario,
+                    :codigo_orden
                 );
             END;
             `,
@@ -233,9 +66,26 @@ export async function registrarCalculoTigimoli(data) {
                     val: data.cantidadesRollos
                 },
 
-                usuario: data.usuario
+                rpms_molinetes: {
+                    type: oracledb.NUMBER,
+                    dir: oracledb.BIND_IN,
+                    val: data.rpmsMolinetes
+                },
+
+                cod_tipo_hilaza: data.codTipoHilaza,
+
+                usuario: data.usuario,
+
+                codigo_orden: {
+                    type: oracledb.NUMBER,
+                    dir: oracledb.BIND_OUT
+                }
             }
         );
+
+        return {
+            codigoOrden: result.outBinds.codigo_orden
+        };
 
     } finally {
 

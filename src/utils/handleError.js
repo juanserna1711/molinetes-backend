@@ -114,10 +114,45 @@ export function handleError(error, res, defaultMessage) {
             field: null,
             message: 'No se puede eliminar la talla porque tiene cálculos de tiempo de giro asociados.'
         },
+
         20017: {
             status: 400,
             field: null,
             message: 'No se puede eliminar el molinete porque tiene cálculos de tiempo de giro asociados.'
+        },
+
+        20018: {
+            status: 404,
+            field: 'codTipoHilaza',
+            message: 'El tipo de hilaza indicado no existe.'
+        },
+
+        20019: {
+            status: 409,
+            field: null,
+            message: 'No se puede eliminar el tipo de hilaza porque tiene registros de promedio asociados.'
+        },
+        20020: {
+            status: 409,
+            field: null,
+            message: 'El tipo de hilaza ya tiene información asociada para la talla indicada.'
+        },
+
+        20021: {
+            status: 404,
+            field: null,
+            message: 'El tipo de hilaza no tiene información asociada para la talla indicada.'
+        },
+
+        20022: {
+            status: 409,
+            field: null,
+            message: 'El tipo de hilaza no tiene información de promedio asociada.'
+        },
+        20023: {
+            status: 400,
+            field: 'codTalla',
+            message: 'La talla RIB no puede tener información asociada en promedios por tipo de hilaza.'
         }
     };
 

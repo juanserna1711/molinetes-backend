@@ -17,7 +17,6 @@
 import oracledb from 'oracledb';
 import { getConnection } from '../config/database.js';
 
-
 /*
   Consulta los rendimientos por talla utilizando los filtros recibidos.
 */
@@ -82,7 +81,6 @@ export async function consultarRendTallas({
     }
 }
 
-
 /*
   Registra un nuevo rendimiento por talla con la información recibida.
 */
@@ -120,7 +118,6 @@ export async function insertarRendTalla(data) {
         }
     }
 }
-
 
 /*
   Actualiza la información del rendimiento por talla seleccionado.
