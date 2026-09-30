@@ -1,11 +1,11 @@
 /*=============================================================================
-  Nombre responsabilidad: Enrutamiento HTTP de molinetes
+  Nombre responsabilidad: Enrutamiento HTTP de tipos de hilaza
 
   Autor: JUAN ANDRES SERNA CASTRO
-  Fecha_creacion: 22/Septiembre/2026
+  Fecha_creacion: 24/Septiembre/2026
 
   Descripcion responsabilidad:
-  Relaciona los endpoints del recurso con molinetes.controller.js.
+  Relaciona los endpoints del recurso con tipohilaza.controller.js.
 
   Historial_modificaciones:
 
@@ -21,7 +21,7 @@ import {
     crear,
     actualizar,
     eliminar
-} from '../controllers/molinetes.controller.js';
+} from '../controllers/tipohilaza.controller.js';
 
 const router = Router();
 

@@ -1,11 +1,11 @@
 /*=============================================================================
-  Nombre responsabilidad: Acceso Oracle para tallas
+  Nombre responsabilidad: Acceso Oracle para promedios por tipo de hilaza
 
   Autor: JUAN ANDRES SERNA CASTRO
-  Fecha_creacion: 22/Septiembre/2026
+  Fecha_creacion: 24/Septiembre/2026
 
   Descripcion responsabilidad:
-  Ejecuta los procedimientos de PKG_TALLA desde los controladores del recurso.
+  Ejecuta los procedimientos de PKG_TIHIPROM desde los controladores del recurso.
 
   Historial_modificaciones:
 
@@ -18,13 +18,13 @@ import oracledb from 'oracledb';
 import { getConnection } from '../config/database.js';
 
 /*
-  Invoca PKG_TALLA.consultaTalla con código, nombre y estado opcionales.
-  Envía null para filtros ausentes y devuelve objetos de talla desde el cursor.
+  Invoca PKG_TIHIPROM.consultaTiHiProm con hilaza y talla opcionales.
+  Envía null para filtros ausentes y devuelve objetos con medidas, promedio
+  y datos de registro obtenidos del cursor Oracle.
 */
-export async function consultarTallas({
-    codTalla = null,
-    nomTalla = null,
-    estaTalla = null
+export async function consultarTiHiProm({
+    codTipoHilaza = null,
+    codTalla = null
 } = {}) {
 
     let connection;
@@ -36,18 +36,16 @@ export async function consultarTallas({
         result = await connection.execute(
             `
             BEGIN
-                PKG_TALLA.consultaTalla(
+                PKG_TIHIPROM.consultaTiHiProm(
+                    :cod_tipo_hilaza,
                     :cod_talla,
-                    :nom_talla,
-                    :esta_talla,
                     :cursor
                 );
             END;
             `,
             {
+                cod_tipo_hilaza: codTipoHilaza,
                 cod_talla: codTalla,
-                nom_talla: nomTalla,
-                esta_talla: estaTalla,
 
                 cursor: {
                     dir: oracledb.BIND_OUT,
@@ -67,13 +65,20 @@ export async function consultarTallas({
         await resultSet.close();
 
         /*
-          Convierte las tres columnas del cursor a propiedades del servicio:
-          código [0], nombre [1] y estado [2], conservando sus valores.
+          Traduce posiciones del cursor a propiedades: hilaza [0-1], talla [2-3],
+          peso [4], ancho [5], promedio [6], fecha [7] y usuario [8].
+          El promedio se recibe de Oracle; el map no lo vuelve a calcular.
         */
         return rows.map(row => ({
-            codigo: row[0],
-            nombre: row[1],
-            estado: row[2]
+            codigoTipoHilaza: row[0],
+            nombreTipoHilaza: row[1],
+            codigoTalla: row[2],
+            nombreTalla: row[3],
+            peso: row[4],
+            ancho: row[5],
+            promedio: row[6],
+            fechaGeneracion: row[7],
+            usuario: row[8]
         }));
 
     } finally {
@@ -89,10 +94,11 @@ export async function consultarTallas({
 }
 
 /*
-  Invoca PKG_TALLA.insertarTalla vinculando codTalla, nomTalla y estaTalla
-  de data con los binds de entrada de código, nombre y estado.
+  Invoca PKG_TIHIPROM.insertarTiHiProm con hilaza, talla, peso, ancho
+  y usuario de data como binds de entrada. El cálculo del promedio
+  y las validaciones quedan a cargo del procedimiento Oracle.
 */
-export async function insertarTalla(data) {
+export async function insertarTiHiProm(data) {
 
     let connection;
 
@@ -102,17 +108,21 @@ export async function insertarTalla(data) {
         await connection.execute(
             `
             BEGIN
-                PKG_TALLA.insertarTalla(
+                PKG_TIHIPROM.insertarTiHiProm(
+                    :cod_tipo_hilaza,
                     :cod_talla,
-                    :nom_talla,
-                    :esta_talla
+                    :peso_tihiprom,
+                    :ancho_tihiprom,
+                    :usuario_tihiprom
                 );
             END;
             `,
             {
+                cod_tipo_hilaza: data.codTipoHilaza,
                 cod_talla: data.codTalla,
-                nom_talla: data.nomTalla,
-                esta_talla: data.estaTalla
+                peso_tihiprom: data.pesoTiHiProm,
+                ancho_tihiprom: data.anchoTiHiProm,
+                usuario_tihiprom: data.usuarioTiHiProm
             }
         );
 
@@ -129,10 +139,11 @@ export async function insertarTalla(data) {
 }
 
 /*
-  Invoca PKG_TALLA.actualizarTalla con el identificador codTalla y el
-  nombre y estado de data; estos valores se envían directamente a Oracle.
+  Invoca PKG_TIHIPROM.actualizarTiHiProm para la pareja codTipoHilaza/codTalla.
+  Vincula pesoTiHiProm, anchoTiHiProm y usuarioTiHiProm de data a los binds
+  de medidas y usuario sin transformar sus valores.
 */
-export async function actualizarTalla(codTalla, data) {
+export async function actualizarTiHiProm(codTipoHilaza, codTalla, data) {
 
     let connection;
 
@@ -142,17 +153,21 @@ export async function actualizarTalla(codTalla, data) {
         await connection.execute(
             `
             BEGIN
-                PKG_TALLA.actualizarTalla(
+                PKG_TIHIPROM.actualizarTiHiProm(
+                    :cod_tipo_hilaza,
                     :cod_talla,
-                    :nom_talla,
-                    :esta_talla
+                    :peso_tihiprom,
+                    :ancho_tihiprom,
+                    :usuario_tihiprom
                 );
             END;
             `,
             {
+                cod_tipo_hilaza: codTipoHilaza,
                 cod_talla: codTalla,
-                nom_talla: data.nomTalla,
-                esta_talla: data.estaTalla
+                peso_tihiprom: data.pesoTiHiProm,
+                ancho_tihiprom: data.anchoTiHiProm,
+                usuario_tihiprom: data.usuarioTiHiProm
             }
         );
 
@@ -169,10 +184,10 @@ export async function actualizarTalla(codTalla, data) {
 }
 
 /*
-  Solicita la activación a PKG_TALLA.activarTalla mediante el bind cod_talla.
-  El servicio delega el cambio de estado y sus validaciones en Oracle.
+  Invoca PKG_TIHIPROM.eliminarTiHiProm con hilaza y talla como entradas.
+  Ambos códigos identifican la información cuya eliminación se solicita.
 */
-export async function activarTalla(codTalla) {
+export async function eliminarTiHiProm(codTipoHilaza, codTalla) {
 
     let connection;
 
@@ -182,10 +197,14 @@ export async function activarTalla(codTalla) {
         await connection.execute(
             `
             BEGIN
-                PKG_TALLA.activarTalla(:cod_talla);
+                PKG_TIHIPROM.eliminarTiHiProm(
+                    :cod_tipo_hilaza,
+                    :cod_talla
+                );
             END;
             `,
             {
+                cod_tipo_hilaza: codTipoHilaza,
                 cod_talla: codTalla
             }
         );
@@ -203,10 +222,11 @@ export async function activarTalla(codTalla) {
 }
 
 /*
-  Solicita la desactivación a PKG_TALLA.desactivarTalla mediante cod_talla.
-  El servicio delega el cambio de estado y sus validaciones en Oracle.
+  Invoca PKG_TIHIPROM.aplicarTipoHilaza para aplicar la hilaza a RENDTALL.
+  Envía codTipoHilaza y usuarioRendtall como binds de entrada; no realiza
+  cálculos de rendimiento ni obtiene un result set en este servicio.
 */
-export async function desactivarTalla(codTalla) {
+export async function aplicarTipoHilaza(codTipoHilaza, usuarioRendtall) {
 
     let connection;
 
@@ -216,45 +236,15 @@ export async function desactivarTalla(codTalla) {
         await connection.execute(
             `
             BEGIN
-                PKG_TALLA.desactivarTalla(:cod_talla);
+                PKG_TIHIPROM.aplicarTipoHilaza(
+                    :cod_tipo_hilaza,
+                    :usuario_rendtall
+                );
             END;
             `,
             {
-                cod_talla: codTalla
-            }
-        );
-
-    } finally {
-        /*
-          Intenta cerrar la conexión adquirida tanto al completar como al fallar.
-          Sin catch local, los errores se propagan; un error del propio cierre
-          también puede propagarse al llamador.
-        */
-        if (connection) {
-            await connection.close();
-        }
-    }
-}
-
-/*
-  Invoca PKG_TALLA.eliminarTalla con codTalla como único bind de entrada.
-  Oracle determina si el registro puede eliminarse.
-*/
-export async function eliminarTalla(codTalla) {
-
-    let connection;
-
-    try {
-        connection = await getConnection();
-
-        await connection.execute(
-            `
-            BEGIN
-                PKG_TALLA.eliminarTalla(:cod_talla);
-            END;
-            `,
-            {
-                cod_talla: codTalla
+                cod_tipo_hilaza: codTipoHilaza,
+                usuario_rendtall: usuarioRendtall
             }
         );
 

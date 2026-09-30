@@ -1,11 +1,11 @@
 /*=============================================================================
-  Nombre responsabilidad: Acceso Oracle para molinetes
+  Nombre responsabilidad: Acceso Oracle para tipos de hilaza
 
   Autor: JUAN ANDRES SERNA CASTRO
-  Fecha_creacion: 22/Septiembre/2026
+  Fecha_creacion: 24/Septiembre/2026
 
   Descripcion responsabilidad:
-  Ejecuta los procedimientos de PKG_MOLINETE desde los controladores del recurso.
+  Ejecuta los procedimientos de PKG_TIPOHILA desde los controladores del recurso.
 
   Historial_modificaciones:
 
@@ -18,13 +18,13 @@ import oracledb from 'oracledb';
 import { getConnection } from '../config/database.js';
 
 /*
-  Invoca PKG_MOLINETE.consultaMolinete con código y nombre opcionales.
-  Los filtros ausentes se envían como null; devuelve objetos con código,
-  nombre, RPM y perímetro a partir de las filas del cursor Oracle.
+  Invoca PKG_TIPOHILA.consultaTipoHilaza con código y nombre opcionales.
+  Los filtros ausentes se envían como null; devuelve objetos de hilaza
+  construidos a partir del cursor OUT.
 */
-export async function consultarMolinetes({
-    codMolinete = null,
-    nomMolinete = null
+export async function consultarTiposHilaza({
+    codTipoHilaza = null,
+    nomTipoHilaza = null
 } = {}) {
 
     let connection;
@@ -36,16 +36,17 @@ export async function consultarMolinetes({
         result = await connection.execute(
             `
             BEGIN
-                PKG_MOLINETE.consultaMolinete(
-                    :cod_molinete,
-                    :nom_molinete,
+                PKG_TIPOHILA.consultaTipoHilaza(
+                    :cod_tipo_hilaza,
+                    :nom_tipo_hilaza,
                     :cursor
                 );
             END;
             `,
             {
-                cod_molinete: codMolinete,
-                nom_molinete: nomMolinete,
+                cod_tipo_hilaza: codTipoHilaza,
+                nom_tipo_hilaza: nomTipoHilaza,
+
                 cursor: {
                     dir: oracledb.BIND_OUT,
                     type: oracledb.CURSOR
@@ -64,14 +65,12 @@ export async function consultarMolinetes({
         await resultSet.close();
 
         /*
-          El orden del cursor determina el mapeo: posiciones 0 y 1 para código
-          y nombre, 2 para RPM y 3 para perímetro.
+          El cursor entrega código en la posición 0 y nombre en la 1.
+          El map adapta esas columnas a la estructura consumida por el controlador.
         */
         return rows.map(row => ({
             codigo: row[0],
-            nombre: row[1],
-            rpm: row[2],
-            perimetro: row [3]
+            nombre: row[1]
         }));
 
     } finally {
@@ -87,11 +86,10 @@ export async function consultarMolinetes({
 }
 
 /*
-  Invoca PKG_MOLINETE.insertarMolinete con los valores de data.
-  Los binds de entrada relacionan codMolinete, nomMolinete, rpmMolinete
-  y periMolinete con los cuatro parámetros PL/SQL sin transformar valores.
+  Invoca PKG_TIPOHILA.insertarTipoHilaza con codTipoHilaza y nomTipoHilaza
+  de data como binds de entrada, conservando los valores recibidos.
 */
-export async function insertarMolinete(data) {
+export async function insertarTipoHilaza(data) {
 
     let connection;
 
@@ -101,19 +99,15 @@ export async function insertarMolinete(data) {
         await connection.execute(
             `
             BEGIN
-                PKG_MOLINETE.insertarMolinete(
-                    :cod_molinete,
-                    :nom_molinete,
-                    :rpm_molinete,
-                    :peri_molinete
+                PKG_TIPOHILA.insertarTipoHilaza(
+                    :cod_tipo_hilaza,
+                    :nom_tipo_hilaza
                 );
             END;
             `,
             {
-                cod_molinete: data.codMolinete,
-                nom_molinete: data.nomMolinete,
-                rpm_molinete: data.rpmMolinete,
-                peri_molinete: data.periMolinete
+                cod_tipo_hilaza: data.codTipoHilaza,
+                nom_tipo_hilaza: data.nomTipoHilaza
             }
         );
 
@@ -130,10 +124,10 @@ export async function insertarMolinete(data) {
 }
 
 /*
-  Invoca PKG_MOLINETE.actualizarMolinete con codMolinete como identificador
-  y data como origen del nombre, las RPM y el perímetro enviados a Oracle.
+  Invoca PKG_TIPOHILA.actualizarTipoHilaza usando codTipoHilaza como
+  identificador y data.nomTipoHilaza como nombre enviado a Oracle.
 */
-export async function actualizarMolinete(codMolinete, data) {
+export async function actualizarTipoHilaza(codTipoHilaza, data) {
 
     let connection;
 
@@ -143,19 +137,15 @@ export async function actualizarMolinete(codMolinete, data) {
         await connection.execute(
             `
             BEGIN
-                PKG_MOLINETE.actualizarMolinete(
-                    :cod_molinete,
-                    :nom_molinete,
-                    :rpm_molinete,
-                    :peri_molinete
+                PKG_TIPOHILA.actualizarTipoHilaza(
+                    :cod_tipo_hilaza,
+                    :nom_tipo_hilaza
                 );
             END;
             `,
             {
-                cod_molinete: codMolinete,
-                nom_molinete: data.nomMolinete,
-                rpm_molinete: data.rpmMolinete,
-                peri_molinete: data.periMolinete
+                cod_tipo_hilaza: codTipoHilaza,
+                nom_tipo_hilaza: data.nomTipoHilaza
             }
         );
 
@@ -172,10 +162,10 @@ export async function actualizarMolinete(codMolinete, data) {
 }
 
 /*
-  Invoca PKG_MOLINETE.eliminarMolinete con el código como único bind de entrada.
-  Las validaciones de eliminación quedan a cargo del procedimiento Oracle.
+  Invoca PKG_TIPOHILA.eliminarTipoHilaza con el código como única entrada.
+  Las validaciones de la eliminación se delegan al procedimiento Oracle.
 */
-export async function eliminarMolinete(codMolinete) {
+export async function eliminarTipoHilaza(codTipoHilaza) {
 
     let connection;
 
@@ -185,11 +175,13 @@ export async function eliminarMolinete(codMolinete) {
         await connection.execute(
             `
             BEGIN
-                PKG_MOLINETE.eliminarMolinete(:cod_molinete);
+                PKG_TIPOHILA.eliminarTipoHilaza(
+                    :cod_tipo_hilaza
+                );
             END;
             `,
             {
-                cod_molinete: codMolinete
+                cod_tipo_hilaza: codTipoHilaza
             }
         );
 

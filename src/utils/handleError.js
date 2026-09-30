@@ -1,43 +1,174 @@
+/*=============================================================================
+  Nombre responsabilidad: Traducir errores de Oracle a respuestas HTTP
+
+  Autor: JUAN ANDRES SERNA CASTRO
+  Fecha_creacion: 22/Septiembre/2026
+
+  Descripcion responsabilidad:
+  Centraliza los mensajes de negocio usados por los controladores.
+
+  Historial_modificaciones:
+
+  Autor:
+  Fecha:
+  Descripcion:
+=============================================================================*/
+/*
+  Convierte los errores reconocidos en mensajes para el cliente y usa un mensaje general para los demás.
+*/
 export function handleError(error, res, defaultMessage) {
     console.error(error);
 
     const oracleCode = error.errorNum;
 
     const businessErrors = {
-        20001: 400,
-        20002: 400,
-        20003: 400,
-        20004: 404,
-        20005: 409,
-        20006: 400,
-        20007: 400,
-        20008: 404,
-        20009: 404,
-        20010: 400,
-        20011: 400,
-        20012: 409
+        20001: {
+            status: 400,
+            field: 'anchoRendtall',
+            message: 'El ancho de la talla debe ser mayor que cero.'
+        },
+
+        20002: {
+            status: 400,
+            field: 'pesoRendtall',
+            message: 'El peso por metro cuadrado debe ser mayor que cero.'
+        },
+
+        20003: {
+            status: 400,
+            field: 'rolloRendtall',
+            message: 'El peso del rollo debe ser mayor que cero.'
+        },
+
+        20004: {
+            status: 404,
+            field: 'codTalla',
+            message: 'La talla indicada no existe.'
+        },
+
+        20005: {
+            status: 409,
+            field: null,
+            message: 'La talla no tiene información de rendimiento asociada.'
+        },
+
+        20006: {
+            status: 400,
+            field: 'rendimiento',
+            message: 'El rendimiento calculado supera el máximo permitido de 99.9.'
+        },
+
+        20007: {
+            status: 400,
+            field: 'metrosRollo',
+            message: 'Los metros por rollo calculados superan el máximo permitido de 99999.9.'
+        },
+
+        20008: {
+            status: 404,
+            field: 'codUsuario',
+            message: 'El usuario indicado no existe.'
+        },
+
+        20009: {
+            status: 404,
+            field: 'codMolinete',
+            message: 'El molinete indicado no existe.'
+        },
+
+        20010: {
+            status: 400,
+            field: 'rpmMolinete',
+            message: 'El RPM del molinete no es válido, debe estar entre 1 y 999.'
+        },
+
+        20011: {
+            status: 400,
+            field: 'periMolinete',
+            message: 'El perímetro del molinete no es válido, debe estar entre 1 y 999.'
+        },
+
+        20012: {
+            status: 409,
+            field: null,
+            message: 'La talla ya tiene información de rendimiento asociada.'
+        },
+
+        20013: {
+            status: 400,
+            field: 'rollos',
+            message: 'La cantidad de rollos debe ser mayor que cero.'
+        },
+        20014: {
+            status: 400,
+            field: null,
+            message: 'Los datos del cálculo no son consistentes.'
+        },
+        20015: {
+            status: 400,
+            field: null,
+            message: 'El cálculo debe contener al menos un registro.'
+        },
+        20016: {
+            status: 400,
+            field: null,
+            message: 'No se puede eliminar la talla porque tiene cálculos de tiempo de giro asociados.'
+        },
+
+        20017: {
+            status: 400,
+            field: null,
+            message: 'No se puede eliminar el molinete porque tiene cálculos de tiempo de giro asociados.'
+        },
+
+        20018: {
+            status: 404,
+            field: 'codTipoHilaza',
+            message: 'El tipo de hilaza indicado no existe.'
+        },
+
+        20019: {
+            status: 409,
+            field: null,
+            message: 'No se puede eliminar el tipo de hilaza porque tiene registros de promedio asociados.'
+        },
+        20020: {
+            status: 409,
+            field: null,
+            message: 'El tipo de hilaza ya tiene información asociada para la talla indicada.'
+        },
+
+        20021: {
+            status: 404,
+            field: null,
+            message: 'El tipo de hilaza no tiene información asociada para la talla indicada.'
+        },
+
+        20022: {
+            status: 409,
+            field: null,
+            message: 'El tipo de hilaza no tiene información de promedio asociada.'
+        },
+        20023: {
+            status: 400,
+            field: 'codTalla',
+            message: 'La talla RIB no puede tener información asociada en promedios por tipo de hilaza.'
+        }
     };
 
-    const businessMessages = {
-        20001: 'El ancho de la talla debe ser mayor que cero.',
-        20002: 'El peso por metro cuadrado debe ser mayor que cero.',
-        20003: 'El peso del rollo debe ser mayor que cero.',
-        20004: 'La talla indicada no existe.',
-        20005: 'La talla no tiene información de rendimiento asociada.',
-        20006: 'El rendimiento calculado supera el máximo permitido de 9.9.',
-        20007: 'Los metros por rollo calculados superan el máximo permitido de 999.9.',
-        20008: 'El usuario indicado no existe.',
-        20009: 'El molinete indicado no existe.',
-        20010: 'El RPM del molinete no es válido, debe estar entre 1 y 999.',
-        20011: 'El perímetro del molinete no es válido, debe estar entre 1 y 999.',
-        20012: 'No se puede eliminar la talla porque tiene registros de rendimiento asociados.'
-    };
+    const businessError = businessErrors[oracleCode];
 
-    const statusCode = businessErrors[oracleCode] || 500;
-    const message = businessMessages[oracleCode] || defaultMessage;
+    if (!businessError) {
+        return res.status(500).json({
+            success: false,
+            message: defaultMessage
+        });
+    }
 
-    return res.status(statusCode).json({
+    return res.status(businessError.status).json({
         success: false,
-        message
+        code: oracleCode,
+        field: businessError.field,
+        message: businessError.message
     });
 }

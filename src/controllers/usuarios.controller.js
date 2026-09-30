@@ -1,3 +1,19 @@
+/*=============================================================================
+  Nombre responsabilidad: Adaptar solicitudes HTTP de usuarios
+
+  Autor: JUAN ANDRES SERNA CASTRO
+  Fecha_creacion: 22/Septiembre/2026
+
+  Descripcion responsabilidad:
+  Traduce req a llamadas de usuarios.service.js y entrega respuestas JSON.
+
+  Historial_modificaciones:
+
+  Autor:
+  Fecha:
+  Descripcion:
+=============================================================================*/
+
 import {
     consultarUsuarios,
     insertarUsuario,
@@ -9,7 +25,12 @@ import {
 
 import { handleError } from '../utils/handleError.js';
 
-
+/*
+  Lee codigo, nombre y estado de req.query para consultarUsuarios.
+  Convierte codigo con Number si su condición es verdadera; de otro modo
+  usa null. Nombre y estado se envían con su valor o null.
+  Devuelve HTTP 200 con success y los usuarios en data sin filtrar sus campos.
+*/
 export async function consultar(req, res) {
     try {
         const { codigo, nombre, estado } = req.query;
@@ -26,6 +47,10 @@ export async function consultar(req, res) {
         });
 
     } catch (error) {
+        /*
+          Delega el error, res y el mensaje de esta operación a handleError;
+          ese manejador determina la respuesta de error que recibe el cliente.
+        */
         return handleError(
             error,
             res,
@@ -34,6 +59,10 @@ export async function consultar(req, res) {
     }
 }
 
+/*
+  Entrega req.body completo a insertarUsuario, sin transformar sus campos.
+  Responde HTTP 201 con success y el mensaje de creación al terminar.
+*/
 export async function crear(req, res) {
     try {
         await insertarUsuario(req.body);
@@ -44,6 +73,10 @@ export async function crear(req, res) {
         });
 
     } catch (error) {
+        /*
+          Delega el error, res y el mensaje de esta operación a handleError;
+          ese manejador determina la respuesta de error que recibe el cliente.
+        */
         return handleError(
             error,
             res,
@@ -52,7 +85,11 @@ export async function crear(req, res) {
     }
 }
 
-
+/*
+  Convierte req.params.codigo a número y llama a actualizarUsuario con
+  ese identificador y req.body. Responde HTTP 200 con success y el mensaje
+  de actualización, sin devolver el usuario modificado.
+*/
 export async function actualizar(req, res) {
     try {
         const codUsuario = Number(req.params.codigo);
@@ -65,6 +102,10 @@ export async function actualizar(req, res) {
         });
 
     } catch (error) {
+        /*
+          Delega el error, res y el mensaje de esta operación a handleError;
+          ese manejador determina la respuesta de error que recibe el cliente.
+        */
         return handleError(
             error,
             res,
@@ -73,6 +114,10 @@ export async function actualizar(req, res) {
     }
 }
 
+/*
+  Convierte req.params.codigo a número y llama a activarUsuario para solicitar
+  el cambio de estado. Devuelve HTTP 200 con success y el mensaje de activación.
+*/
 export async function activar(req, res) {
     try {
         const codUsuario = Number(req.params.codigo);
@@ -85,6 +130,10 @@ export async function activar(req, res) {
         });
 
     } catch (error) {
+        /*
+          Delega el error, res y el mensaje de esta operación a handleError;
+          ese manejador determina la respuesta de error que recibe el cliente.
+        */
         return handleError(
             error,
             res,
@@ -93,7 +142,11 @@ export async function activar(req, res) {
     }
 }
 
-
+/*
+  Convierte req.params.codigo a número y llama a desactivarUsuario para
+  solicitar el cambio de estado. Responde HTTP 200 con success y el mensaje
+  de desactivación; no llama al servicio de eliminación.
+*/
 export async function desactivar(req, res) {
     try {
         const codUsuario = Number(req.params.codigo);
@@ -106,6 +159,10 @@ export async function desactivar(req, res) {
         });
 
     } catch (error) {
+        /*
+          Delega el error, res y el mensaje de esta operación a handleError;
+          ese manejador determina la respuesta de error que recibe el cliente.
+        */
         return handleError(
             error,
             res,
@@ -114,6 +171,10 @@ export async function desactivar(req, res) {
     }
 }
 
+/*
+  Convierte req.params.codigo a número y lo entrega a eliminarUsuario.
+  Al completarse responde HTTP 200 con success y el mensaje de eliminación.
+*/
 export async function eliminar(req, res) {
     try {
         const codUsuario = Number(req.params.codigo);
@@ -126,6 +187,10 @@ export async function eliminar(req, res) {
         });
 
     } catch (error) {
+        /*
+          Delega el error, res y el mensaje de esta operación a handleError;
+          ese manejador determina la respuesta de error que recibe el cliente.
+        */
         return handleError(
             error,
             res,
