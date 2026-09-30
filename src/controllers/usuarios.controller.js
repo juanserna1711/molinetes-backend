@@ -25,9 +25,11 @@ import {
 
 import { handleError } from '../utils/handleError.js';
 
-
 /*
-  Atiende la consulta del recurso y entrega los resultados al cliente.
+  Lee codigo, nombre y estado de req.query para consultarUsuarios.
+  Convierte codigo con Number si su condición es verdadera; de otro modo
+  usa null. Nombre y estado se envían con su valor o null.
+  Devuelve HTTP 200 con success y los usuarios en data sin filtrar sus campos.
 */
 export async function consultar(req, res) {
     try {
@@ -45,6 +47,10 @@ export async function consultar(req, res) {
         });
 
     } catch (error) {
+        /*
+          Delega el error, res y el mensaje de esta operación a handleError;
+          ese manejador determina la respuesta de error que recibe el cliente.
+        */
         return handleError(
             error,
             res,
@@ -54,7 +60,8 @@ export async function consultar(req, res) {
 }
 
 /*
-  Atiende el registro de los datos recibidos y comunica el resultado.
+  Entrega req.body completo a insertarUsuario, sin transformar sus campos.
+  Responde HTTP 201 con success y el mensaje de creación al terminar.
 */
 export async function crear(req, res) {
     try {
@@ -66,6 +73,10 @@ export async function crear(req, res) {
         });
 
     } catch (error) {
+        /*
+          Delega el error, res y el mensaje de esta operación a handleError;
+          ese manejador determina la respuesta de error que recibe el cliente.
+        */
         return handleError(
             error,
             res,
@@ -74,9 +85,10 @@ export async function crear(req, res) {
     }
 }
 
-
 /*
-  Atiende la actualización del registro indicado.
+  Convierte req.params.codigo a número y llama a actualizarUsuario con
+  ese identificador y req.body. Responde HTTP 200 con success y el mensaje
+  de actualización, sin devolver el usuario modificado.
 */
 export async function actualizar(req, res) {
     try {
@@ -90,6 +102,10 @@ export async function actualizar(req, res) {
         });
 
     } catch (error) {
+        /*
+          Delega el error, res y el mensaje de esta operación a handleError;
+          ese manejador determina la respuesta de error que recibe el cliente.
+        */
         return handleError(
             error,
             res,
@@ -99,7 +115,8 @@ export async function actualizar(req, res) {
 }
 
 /*
-  Atiende la activación del registro indicado.
+  Convierte req.params.codigo a número y llama a activarUsuario para solicitar
+  el cambio de estado. Devuelve HTTP 200 con success y el mensaje de activación.
 */
 export async function activar(req, res) {
     try {
@@ -113,6 +130,10 @@ export async function activar(req, res) {
         });
 
     } catch (error) {
+        /*
+          Delega el error, res y el mensaje de esta operación a handleError;
+          ese manejador determina la respuesta de error que recibe el cliente.
+        */
         return handleError(
             error,
             res,
@@ -121,9 +142,10 @@ export async function activar(req, res) {
     }
 }
 
-
 /*
-  Atiende la desactivación del registro indicado.
+  Convierte req.params.codigo a número y llama a desactivarUsuario para
+  solicitar el cambio de estado. Responde HTTP 200 con success y el mensaje
+  de desactivación; no llama al servicio de eliminación.
 */
 export async function desactivar(req, res) {
     try {
@@ -137,6 +159,10 @@ export async function desactivar(req, res) {
         });
 
     } catch (error) {
+        /*
+          Delega el error, res y el mensaje de esta operación a handleError;
+          ese manejador determina la respuesta de error que recibe el cliente.
+        */
         return handleError(
             error,
             res,
@@ -146,7 +172,8 @@ export async function desactivar(req, res) {
 }
 
 /*
-  Atiende la eliminación del registro indicado.
+  Convierte req.params.codigo a número y lo entrega a eliminarUsuario.
+  Al completarse responde HTTP 200 con success y el mensaje de eliminación.
 */
 export async function eliminar(req, res) {
     try {
@@ -160,6 +187,10 @@ export async function eliminar(req, res) {
         });
 
     } catch (error) {
+        /*
+          Delega el error, res y el mensaje de esta operación a handleError;
+          ese manejador determina la respuesta de error que recibe el cliente.
+        */
         return handleError(
             error,
             res,

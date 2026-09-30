@@ -18,7 +18,9 @@ import oracledb from 'oracledb';
 import { getConnection } from '../config/database.js';
 
 /*
-  Consulta los promedios por tipo de hilaza utilizando los filtros recibidos.
+  Invoca PKG_TIHIPROM.consultaTiHiProm con hilaza y talla opcionales.
+  Envía null para filtros ausentes y devuelve objetos con medidas, promedio
+  y datos de registro obtenidos del cursor Oracle.
 */
 export async function consultarTiHiProm({
     codTipoHilaza = null,
@@ -52,12 +54,21 @@ export async function consultarTiHiProm({
             }
         );
 
+        /*
+          El bind OUT de tipo CURSOR entrega el result set abierto por Oracle.
+          Se leen sus filas y se cierra antes de construir la respuesta.
+        */
         const resultSet = result.outBinds.cursor;
 
         const rows = await resultSet.getRows();
 
         await resultSet.close();
 
+        /*
+          Traduce posiciones del cursor a propiedades: hilaza [0-1], talla [2-3],
+          peso [4], ancho [5], promedio [6], fecha [7] y usuario [8].
+          El promedio se recibe de Oracle; el map no lo vuelve a calcular.
+        */
         return rows.map(row => ({
             codigoTipoHilaza: row[0],
             nombreTipoHilaza: row[1],
@@ -71,6 +82,11 @@ export async function consultarTiHiProm({
         }));
 
     } finally {
+        /*
+          Intenta cerrar la conexión adquirida tanto al completar como al fallar.
+          Sin catch local, los errores se propagan; un error del propio cierre
+          también puede propagarse al llamador.
+        */
         if (connection) {
             await connection.close();
         }
@@ -78,7 +94,9 @@ export async function consultarTiHiProm({
 }
 
 /*
-  Registra nueva información de promedio para un tipo de hilaza y talla.
+  Invoca PKG_TIHIPROM.insertarTiHiProm con hilaza, talla, peso, ancho
+  y usuario de data como binds de entrada. El cálculo del promedio
+  y las validaciones quedan a cargo del procedimiento Oracle.
 */
 export async function insertarTiHiProm(data) {
 
@@ -109,6 +127,11 @@ export async function insertarTiHiProm(data) {
         );
 
     } finally {
+        /*
+          Intenta cerrar la conexión adquirida tanto al completar como al fallar.
+          Sin catch local, los errores se propagan; un error del propio cierre
+          también puede propagarse al llamador.
+        */
         if (connection) {
             await connection.close();
         }
@@ -116,13 +139,11 @@ export async function insertarTiHiProm(data) {
 }
 
 /*
-  Actualiza la información de promedio del tipo de hilaza y talla seleccionados.
+  Invoca PKG_TIHIPROM.actualizarTiHiProm para la pareja codTipoHilaza/codTalla.
+  Vincula pesoTiHiProm, anchoTiHiProm y usuarioTiHiProm de data a los binds
+  de medidas y usuario sin transformar sus valores.
 */
-export async function actualizarTiHiProm(
-    codTipoHilaza,
-    codTalla,
-    data
-) {
+export async function actualizarTiHiProm(codTipoHilaza, codTalla, data) {
 
     let connection;
 
@@ -151,6 +172,11 @@ export async function actualizarTiHiProm(
         );
 
     } finally {
+        /*
+          Intenta cerrar la conexión adquirida tanto al completar como al fallar.
+          Sin catch local, los errores se propagan; un error del propio cierre
+          también puede propagarse al llamador.
+        */
         if (connection) {
             await connection.close();
         }
@@ -158,12 +184,10 @@ export async function actualizarTiHiProm(
 }
 
 /*
-  Elimina la información correspondiente al tipo de hilaza y talla recibidos.
+  Invoca PKG_TIHIPROM.eliminarTiHiProm con hilaza y talla como entradas.
+  Ambos códigos identifican la información cuya eliminación se solicita.
 */
-export async function eliminarTiHiProm(
-    codTipoHilaza,
-    codTalla
-) {
+export async function eliminarTiHiProm(codTipoHilaza, codTalla) {
 
     let connection;
 
@@ -186,6 +210,11 @@ export async function eliminarTiHiProm(
         );
 
     } finally {
+        /*
+          Intenta cerrar la conexión adquirida tanto al completar como al fallar.
+          Sin catch local, los errores se propagan; un error del propio cierre
+          también puede propagarse al llamador.
+        */
         if (connection) {
             await connection.close();
         }
@@ -193,12 +222,11 @@ export async function eliminarTiHiProm(
 }
 
 /*
-  Aplica en RENDTALL la parametrización del tipo de hilaza seleccionado.
+  Invoca PKG_TIHIPROM.aplicarTipoHilaza para aplicar la hilaza a RENDTALL.
+  Envía codTipoHilaza y usuarioRendtall como binds de entrada; no realiza
+  cálculos de rendimiento ni obtiene un result set en este servicio.
 */
-export async function aplicarTipoHilaza(
-    codTipoHilaza,
-    usuarioRendtall
-) {
+export async function aplicarTipoHilaza(codTipoHilaza, usuarioRendtall) {
 
     let connection;
 
@@ -221,6 +249,11 @@ export async function aplicarTipoHilaza(
         );
 
     } finally {
+        /*
+          Intenta cerrar la conexión adquirida tanto al completar como al fallar.
+          Sin catch local, los errores se propagan; un error del propio cierre
+          también puede propagarse al llamador.
+        */
         if (connection) {
             await connection.close();
         }

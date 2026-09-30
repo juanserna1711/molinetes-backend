@@ -22,12 +22,13 @@ import {
     aplicarTipoHilaza
 } from '../services/tihiprom.service.js';
 
-
 import { handleError } from '../utils/handleError.js';
 
-
 /*
-  Atiende la consulta del recurso y entrega los resultados al cliente.
+  Lee tipoHilaza y talla de req.query y los adapta a codTipoHilaza y
+  codTalla para consultarTiHiProm. Cada valor se convierte con Number si
+  su condición es verdadera; de otro modo se envía null.
+  Devuelve HTTP 200 con success y el resultado del servicio en data.
 */
 export async function consultar(req, res) {
     try {
@@ -48,6 +49,10 @@ export async function consultar(req, res) {
         });
 
     } catch (error) {
+        /*
+          Delega el error, res y el mensaje de esta operación a handleError;
+          ese manejador determina la respuesta de error que recibe el cliente.
+        */
         return handleError(
             error,
             res,
@@ -56,9 +61,9 @@ export async function consultar(req, res) {
     }
 }
 
-
 /*
-  Atiende el registro de los datos recibidos y comunica el resultado.
+  Pasa req.body completo a insertarTiHiProm, sin convertir sus campos aquí.
+  Responde HTTP 201 con success y el mensaje de creación al terminar.
 */
 export async function crear(req, res) {
     try {
@@ -70,6 +75,10 @@ export async function crear(req, res) {
         });
 
     } catch (error) {
+        /*
+          Delega el error, res y el mensaje de esta operación a handleError;
+          ese manejador determina la respuesta de error que recibe el cliente.
+        */
         return handleError(
             error,
             res,
@@ -78,23 +87,18 @@ export async function crear(req, res) {
     }
 }
 
-
 /*
-  Atiende la actualización del registro indicado.
+  Convierte tipoHilaza y talla de req.params a números para identificar
+  la combinación. Los entrega a actualizarTiHiProm junto con req.body.
+  Devuelve HTTP 200 con success y el mensaje de actualización.
 */
 export async function actualizar(req, res) {
     try {
-        const codTipoHilaza =
-            Number(req.params.tipoHilaza);
+        const codTipoHilaza = Number(req.params.tipoHilaza);
 
-        const codTalla =
-            Number(req.params.talla);
+        const codTalla = Number(req.params.talla);
 
-        await actualizarTiHiProm(
-            codTipoHilaza,
-            codTalla,
-            req.body
-        );
+        await actualizarTiHiProm(codTipoHilaza, codTalla, req.body);
 
         return res.status(200).json({
             success: true,
@@ -102,6 +106,10 @@ export async function actualizar(req, res) {
         });
 
     } catch (error) {
+        /*
+          Delega el error, res y el mensaje de esta operación a handleError;
+          ese manejador determina la respuesta de error que recibe el cliente.
+        */
         return handleError(
             error,
             res,
@@ -110,22 +118,18 @@ export async function actualizar(req, res) {
     }
 }
 
-
 /*
-  Atiende la eliminación del registro indicado.
+  Convierte tipoHilaza y talla de req.params a números y los pasa, en ese
+  orden, a eliminarTiHiProm. Devuelve HTTP 200 con success y el mensaje
+  de eliminación de la información asociada a esa combinación.
 */
 export async function eliminar(req, res) {
     try {
-        const codTipoHilaza =
-            Number(req.params.tipoHilaza);
+        const codTipoHilaza = Number(req.params.tipoHilaza);
 
-        const codTalla =
-            Number(req.params.talla);
+        const codTalla = Number(req.params.talla);
 
-        await eliminarTiHiProm(
-            codTipoHilaza,
-            codTalla
-        );
+        await eliminarTiHiProm(codTipoHilaza, codTalla);
 
         return res.status(200).json({
             success: true,
@@ -133,6 +137,10 @@ export async function eliminar(req, res) {
         });
 
     } catch (error) {
+        /*
+          Delega el error, res y el mensaje de esta operación a handleError;
+          ese manejador determina la respuesta de error que recibe el cliente.
+        */
         return handleError(
             error,
             res,
@@ -141,21 +149,18 @@ export async function eliminar(req, res) {
     }
 }
 
-
 /*
-  Aplica en RENDTALL la parametrización del tipo de hilaza indicado.
+  Convierte req.params.tipoHilaza a número y extrae usuarioRendtall de
+  req.body sin convertirlo. Llama a aplicarTipoHilaza con ambos valores
+  y responde HTTP 200 con success y el mensaje de aplicación a RENDTALL.
 */
 export async function aplicar(req, res) {
     try {
-        const codTipoHilaza =
-            Number(req.params.tipoHilaza);
+        const codTipoHilaza = Number(req.params.tipoHilaza);
 
         const { usuarioRendtall } = req.body;
 
-        await aplicarTipoHilaza(
-            codTipoHilaza,
-            usuarioRendtall
-        );
+        await aplicarTipoHilaza(codTipoHilaza, usuarioRendtall);
 
         return res.status(200).json({
             success: true,
@@ -163,6 +168,10 @@ export async function aplicar(req, res) {
         });
 
     } catch (error) {
+        /*
+          Delega el error, res y el mensaje de esta operación a handleError;
+          ese manejador determina la respuesta de error que recibe el cliente.
+        */
         return handleError(
             error,
             res,

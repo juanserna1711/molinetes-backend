@@ -23,9 +23,11 @@ import {
 
 import { handleError } from '../utils/handleError.js';
 
-
 /*
-  Atiende la consulta del recurso y entrega los resultados al cliente.
+  Lee codigo y nombre de req.query y llama a consultarMolinetes.
+  Convierte codigo con Number cuando es verdadero en la condición; en caso
+  contrario envía null. Para nombre usa su valor o null.
+  Responde HTTP 200 con { success: true, data: molinetes }.
 */
 export async function consultar(req, res) {
     try {
@@ -42,6 +44,10 @@ export async function consultar(req, res) {
         });
 
     } catch (error) {
+        /*
+          Delega el error, res y el mensaje de esta operación a handleError;
+          ese manejador determina la respuesta de error que recibe el cliente.
+        */
         return handleError(
             error,
             res,
@@ -51,7 +57,9 @@ export async function consultar(req, res) {
 }
 
 /*
-  Atiende el registro de los datos recibidos y comunica el resultado.
+  Entrega req.body completo a insertarMolinete, sin transformarlo aquí.
+  Al completarse el servicio responde HTTP 201 con success y el mensaje
+  de creación; no devuelve el registro creado.
 */
 export async function crear(req, res) {
     try {
@@ -63,6 +71,10 @@ export async function crear(req, res) {
         });
 
     } catch (error) {
+        /*
+          Delega el error, res y el mensaje de esta operación a handleError;
+          ese manejador determina la respuesta de error que recibe el cliente.
+        */
         return handleError(
             error,
             res,
@@ -71,9 +83,10 @@ export async function crear(req, res) {
     }
 }
 
-
 /*
-  Atiende la actualización del registro indicado.
+  Convierte req.params.codigo a número para identificar el molinete y
+  llama a actualizarMolinete con ese código y req.body sin transformar.
+  Responde HTTP 200 con success y el mensaje de actualización.
 */
 export async function actualizar(req, res) {
     try {
@@ -87,6 +100,10 @@ export async function actualizar(req, res) {
         });
 
     } catch (error) {
+        /*
+          Delega el error, res y el mensaje de esta operación a handleError;
+          ese manejador determina la respuesta de error que recibe el cliente.
+        */
         return handleError(
             error,
             res,
@@ -96,7 +113,9 @@ export async function actualizar(req, res) {
 }
 
 /*
-  Atiende la eliminación del registro indicado.
+  Convierte req.params.codigo a número y lo pasa a eliminarMolinete.
+  Tras completar el servicio responde HTTP 200 con success y el mensaje
+  de eliminación; esta operación no utiliza req.body.
 */
 export async function eliminar(req, res) {
     try {
@@ -110,6 +129,10 @@ export async function eliminar(req, res) {
         });
 
     } catch (error) {
+        /*
+          Delega el error, res y el mensaje de esta operación a handleError;
+          ese manejador determina la respuesta de error que recibe el cliente.
+        */
         return handleError(
             error,
             res,

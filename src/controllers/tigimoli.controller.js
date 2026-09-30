@@ -24,7 +24,9 @@ import {
 import { handleError } from '../utils/handleError.js';
 
 /*
-  Atiende el registro del cálculo TIGIMOLI y comunica el código de la Orden de Trabajo generada.
+  Entrega req.body completo a registrarCalculoTigimoli, sin transformar
+  las listas ni sus valores en este controller. Espera codigoOrden en el
+  resultado y responde HTTP 201 con success, message y ese consecutivo.
 */
 export async function crear(req, res) {
 
@@ -39,6 +41,10 @@ export async function crear(req, res) {
         });
 
     } catch (error) {
+        /*
+          Delega el error, res y el mensaje de esta operación a handleError;
+          ese manejador determina la respuesta de error que recibe el cliente.
+        */
 
         return handleError(
             error,

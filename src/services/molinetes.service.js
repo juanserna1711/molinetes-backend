@@ -18,7 +18,9 @@ import oracledb from 'oracledb';
 import { getConnection } from '../config/database.js';
 
 /*
-  Consulta los molinetes utilizando los filtros recibidos.
+  Invoca PKG_MOLINETE.consultaMolinete con código y nombre opcionales.
+  Los filtros ausentes se envían como null; devuelve objetos con código,
+  nombre, RPM y perímetro a partir de las filas del cursor Oracle.
 */
 export async function consultarMolinetes({
     codMolinete = null,
@@ -51,12 +53,20 @@ export async function consultarMolinetes({
             }
         );
 
+        /*
+          El bind OUT de tipo CURSOR entrega el result set abierto por Oracle.
+          Se leen sus filas y se cierra antes de construir la respuesta.
+        */
         const resultSet = result.outBinds.cursor;
 
         const rows = await resultSet.getRows();
 
         await resultSet.close();
 
+        /*
+          El orden del cursor determina el mapeo: posiciones 0 y 1 para código
+          y nombre, 2 para RPM y 3 para perímetro.
+        */
         return rows.map(row => ({
             codigo: row[0],
             nombre: row[1],
@@ -65,6 +75,11 @@ export async function consultarMolinetes({
         }));
 
     } finally {
+        /*
+          Intenta cerrar la conexión adquirida tanto al completar como al fallar.
+          Sin catch local, los errores se propagan; un error del propio cierre
+          también puede propagarse al llamador.
+        */
         if (connection) {
             await connection.close();
         }
@@ -72,7 +87,9 @@ export async function consultarMolinetes({
 }
 
 /*
-  Registra un nuevo molinete con la información recibida.
+  Invoca PKG_MOLINETE.insertarMolinete con los valores de data.
+  Los binds de entrada relacionan codMolinete, nomMolinete, rpmMolinete
+  y periMolinete con los cuatro parámetros PL/SQL sin transformar valores.
 */
 export async function insertarMolinete(data) {
 
@@ -101,6 +118,11 @@ export async function insertarMolinete(data) {
         );
 
     } finally {
+        /*
+          Intenta cerrar la conexión adquirida tanto al completar como al fallar.
+          Sin catch local, los errores se propagan; un error del propio cierre
+          también puede propagarse al llamador.
+        */
         if (connection) {
             await connection.close();
         }
@@ -108,7 +130,8 @@ export async function insertarMolinete(data) {
 }
 
 /*
-  Actualiza la información del molinete seleccionado.
+  Invoca PKG_MOLINETE.actualizarMolinete con codMolinete como identificador
+  y data como origen del nombre, las RPM y el perímetro enviados a Oracle.
 */
 export async function actualizarMolinete(codMolinete, data) {
 
@@ -137,6 +160,11 @@ export async function actualizarMolinete(codMolinete, data) {
         );
 
     } finally {
+        /*
+          Intenta cerrar la conexión adquirida tanto al completar como al fallar.
+          Sin catch local, los errores se propagan; un error del propio cierre
+          también puede propagarse al llamador.
+        */
         if (connection) {
             await connection.close();
         }
@@ -144,7 +172,8 @@ export async function actualizarMolinete(codMolinete, data) {
 }
 
 /*
-  Elimina el molinete correspondiente al código recibido.
+  Invoca PKG_MOLINETE.eliminarMolinete con el código como único bind de entrada.
+  Las validaciones de eliminación quedan a cargo del procedimiento Oracle.
 */
 export async function eliminarMolinete(codMolinete) {
 
@@ -165,6 +194,11 @@ export async function eliminarMolinete(codMolinete) {
         );
 
     } finally {
+        /*
+          Intenta cerrar la conexión adquirida tanto al completar como al fallar.
+          Sin catch local, los errores se propagan; un error del propio cierre
+          también puede propagarse al llamador.
+        */
         if (connection) {
             await connection.close();
         }

@@ -21,21 +21,19 @@ import {
     eliminarRendTalla
 } from '../services/rendtallas.service.js';
 
-
 import { handleError } from '../utils/handleError.js';
 
-
 /*
-  Atiende la consulta del recurso y entrega los resultados al cliente.
+  Lee codigo, nombre y estado de req.query para consultarRendTallas.
+  Nombre se envía con su valor o null.
+  Devuelve HTTP 200 con success y el resultado del servicio en data.
 */
 export async function consultar(req, res) {
     try {
-        const { codigo, nombre, estado } = req.query;
+        const { nombre} = req.query;
 
         const rendTallas = await consultarRendTallas({
-            codTalla: codigo ? Number(codigo) : null,
-            nomTalla: nombre || null,
-            estaTalla: estado || null
+            nomTalla: nombre || null
         });
 
         return res.status(200).json({
@@ -44,6 +42,10 @@ export async function consultar(req, res) {
         });
 
     } catch (error) {
+        /*
+          Delega el error, res y el mensaje de esta operación a handleError;
+          ese manejador determina la respuesta de error que recibe el cliente.
+        */
         return handleError(
             error,
             res,
@@ -53,7 +55,9 @@ export async function consultar(req, res) {
 }
 
 /*
-  Atiende el registro de los datos recibidos y comunica el resultado.
+  Pasa req.body completo a insertarRendTalla para registrar el rendimiento.
+  Sin transformar sus campos aquí, responde HTTP 201 con success y el
+  mensaje de creación cuando termina el servicio.
 */
 export async function crear(req, res) {
     try {
@@ -65,6 +69,10 @@ export async function crear(req, res) {
         });
 
     } catch (error) {
+        /*
+          Delega el error, res y el mensaje de esta operación a handleError;
+          ese manejador determina la respuesta de error que recibe el cliente.
+        */
         return handleError(
             error,
             res,
@@ -73,9 +81,10 @@ export async function crear(req, res) {
     }
 }
 
-
 /*
-  Atiende la actualización del registro indicado.
+  Convierte req.params.codigo a número para identificar la talla y llama
+  a actualizarRendTalla con ese código y req.body. Devuelve HTTP 200 con
+  success y el mensaje de actualización, sin devolver medidas calculadas.
 */
 export async function actualizar(req, res) {
     try {
@@ -89,6 +98,10 @@ export async function actualizar(req, res) {
         });
 
     } catch (error) {
+        /*
+          Delega el error, res y el mensaje de esta operación a handleError;
+          ese manejador determina la respuesta de error que recibe el cliente.
+        */
         return handleError(
             error,
             res,
@@ -98,7 +111,9 @@ export async function actualizar(req, res) {
 }
 
 /*
-  Atiende la eliminación del registro indicado.
+  Convierte req.params.codigo a número y solicita a eliminarRendTalla
+  la eliminación del rendimiento asociado. Responde HTTP 200 con success
+  y el mensaje de eliminación cuando el servicio se completa.
 */
 export async function eliminar(req, res) {
     try {
@@ -112,6 +127,10 @@ export async function eliminar(req, res) {
         });
 
     } catch (error) {
+        /*
+          Delega el error, res y el mensaje de esta operación a handleError;
+          ese manejador determina la respuesta de error que recibe el cliente.
+        */
         return handleError(
             error,
             res,

@@ -19,7 +19,9 @@ import oracledb from 'oracledb';
 import { getConnection } from '../config/database.js';
 
 /*
-  Consulta las órdenes de trabajo utilizando los filtros y paginación recibidos.
+  Invoca PKG_ORDEPROD.consultaOrdeProd con filtros y paginación.
+  Devuelve { totalRegistros, datos }: el total procede del bind NUMBER OUT
+  y datos contiene los objetos construidos con las filas del cursor OUT.
 */
 export async function consultarOrdeProd({
     codOrden = null,
@@ -37,6 +39,10 @@ export async function consultarOrdeProd({
 
         connection = await getConnection();
 
+        /*
+          Construye fechas a medianoche con las cadenas recibidas; sin valor,
+          envía null. Los binds DATE IN transmiten estos objetos a Oracle.
+        */
         const inicio = fechaInicio
             ? new Date(`${fechaInicio}T00:00:00`)
             : null;
@@ -93,12 +99,21 @@ export async function consultarOrdeProd({
             }
         );
 
+        /*
+          El bind OUT de tipo CURSOR entrega el result set abierto por Oracle.
+          Se leen sus filas y se cierra antes de construir la respuesta.
+        */
         const resultSet = result.outBinds.cursor;
 
         const rows = await resultSet.getRows();
 
         await resultSet.close();
 
+        /*
+          El total se obtiene por separado del cursor. Cada fila aporta orden [0],
+          hilaza [1-2], fecha [3], usuario [4-5] y cantidad de molinetes [6].
+          El map adapta esas posiciones a propiedades con nombre sin recalcularlas.
+        */
         return {
             totalRegistros: result.outBinds.total_registros,
 
@@ -114,6 +129,11 @@ export async function consultarOrdeProd({
         };
 
     } finally {
+        /*
+          Intenta cerrar la conexión adquirida tanto al completar como al fallar.
+          Sin catch local, los errores se propagan; un error del propio cierre
+          también puede propagarse al llamador.
+        */
 
         if (connection) {
             await connection.close();
@@ -123,7 +143,9 @@ export async function consultarOrdeProd({
 }
 
 /*
-  Consulta todos los detalles asociados a una Orden de Trabajo.
+  Invoca PKG_ORDEPROD.consultaDetalleOrdeProd para codOrden.
+  Devuelve un arreglo de detalles con datos de hilaza, molinete y talla,
+  cantidades y totales calculados por Oracle, RPM, fecha y usuario.
 */
 export async function consultarDetalleOrdeProd(codOrden) {
 
@@ -153,12 +175,22 @@ export async function consultarDetalleOrdeProd(codOrden) {
             }
         );
 
+        /*
+          El bind OUT de tipo CURSOR entrega el result set abierto por Oracle.
+          Se leen sus filas y se cierra antes de construir la respuesta.
+        */
         const resultSet = result.outBinds.cursor;
 
         const rows = await resultSet.getRows();
 
         await resultSet.close();
 
+        /*
+          Conserva el orden del cursor: orden [0], hilaza [1-2], molinete [3-4],
+          perímetro [5], talla [6-7], cantidades del detalle [8-10], totales
+          por molinete [11-13], RPM [14], fecha [15] y usuario [16-17].
+          Los totales se copian de Oracle; no se acumulan nuevamente aquí.
+        */
         return rows.map(row => ({
             codigoOrden: row[0],
 
@@ -190,6 +222,11 @@ export async function consultarDetalleOrdeProd(codOrden) {
         }));
 
     } finally {
+        /*
+          Intenta cerrar la conexión adquirida tanto al completar como al fallar.
+          Sin catch local, los errores se propagan; un error del propio cierre
+          también puede propagarse al llamador.
+        */
 
         if (connection) {
             await connection.close();

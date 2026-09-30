@@ -18,7 +18,9 @@ import oracledb from 'oracledb';
 import { getConnection } from '../config/database.js';
 
 /*
-  Consulta los tipos de hilaza utilizando los filtros recibidos.
+  Invoca PKG_TIPOHILA.consultaTipoHilaza con código y nombre opcionales.
+  Los filtros ausentes se envían como null; devuelve objetos de hilaza
+  construidos a partir del cursor OUT.
 */
 export async function consultarTiposHilaza({
     codTipoHilaza = null,
@@ -52,18 +54,31 @@ export async function consultarTiposHilaza({
             }
         );
 
+        /*
+          El bind OUT de tipo CURSOR entrega el result set abierto por Oracle.
+          Se leen sus filas y se cierra antes de construir la respuesta.
+        */
         const resultSet = result.outBinds.cursor;
 
         const rows = await resultSet.getRows();
 
         await resultSet.close();
 
+        /*
+          El cursor entrega código en la posición 0 y nombre en la 1.
+          El map adapta esas columnas a la estructura consumida por el controlador.
+        */
         return rows.map(row => ({
             codigo: row[0],
             nombre: row[1]
         }));
 
     } finally {
+        /*
+          Intenta cerrar la conexión adquirida tanto al completar como al fallar.
+          Sin catch local, los errores se propagan; un error del propio cierre
+          también puede propagarse al llamador.
+        */
         if (connection) {
             await connection.close();
         }
@@ -71,7 +86,8 @@ export async function consultarTiposHilaza({
 }
 
 /*
-  Registra un nuevo tipo de hilaza con la información recibida.
+  Invoca PKG_TIPOHILA.insertarTipoHilaza con codTipoHilaza y nomTipoHilaza
+  de data como binds de entrada, conservando los valores recibidos.
 */
 export async function insertarTipoHilaza(data) {
 
@@ -96,6 +112,11 @@ export async function insertarTipoHilaza(data) {
         );
 
     } finally {
+        /*
+          Intenta cerrar la conexión adquirida tanto al completar como al fallar.
+          Sin catch local, los errores se propagan; un error del propio cierre
+          también puede propagarse al llamador.
+        */
         if (connection) {
             await connection.close();
         }
@@ -103,7 +124,8 @@ export async function insertarTipoHilaza(data) {
 }
 
 /*
-  Actualiza la información del tipo de hilaza seleccionado.
+  Invoca PKG_TIPOHILA.actualizarTipoHilaza usando codTipoHilaza como
+  identificador y data.nomTipoHilaza como nombre enviado a Oracle.
 */
 export async function actualizarTipoHilaza(codTipoHilaza, data) {
 
@@ -128,6 +150,11 @@ export async function actualizarTipoHilaza(codTipoHilaza, data) {
         );
 
     } finally {
+        /*
+          Intenta cerrar la conexión adquirida tanto al completar como al fallar.
+          Sin catch local, los errores se propagan; un error del propio cierre
+          también puede propagarse al llamador.
+        */
         if (connection) {
             await connection.close();
         }
@@ -135,7 +162,8 @@ export async function actualizarTipoHilaza(codTipoHilaza, data) {
 }
 
 /*
-  Elimina el tipo de hilaza correspondiente al código recibido.
+  Invoca PKG_TIPOHILA.eliminarTipoHilaza con el código como única entrada.
+  Las validaciones de la eliminación se delegan al procedimiento Oracle.
 */
 export async function eliminarTipoHilaza(codTipoHilaza) {
 
@@ -158,6 +186,11 @@ export async function eliminarTipoHilaza(codTipoHilaza) {
         );
 
     } finally {
+        /*
+          Intenta cerrar la conexión adquirida tanto al completar como al fallar.
+          Sin catch local, los errores se propagan; un error del propio cierre
+          también puede propagarse al llamador.
+        */
         if (connection) {
             await connection.close();
         }

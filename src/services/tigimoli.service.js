@@ -22,7 +22,9 @@ import oracledb from 'oracledb';
 import { getConnection } from '../config/database.js';
 
 /*
-  Registra un nuevo cálculo TIGIMOLI y genera la respectiva Orden de Trabajo.
+  Invoca PKG_TIGIMOLI.registrarCalculoTigimoli para registrar el cálculo
+  y generar su orden. Envía las listas de data sin reordenarlas ni convertir
+  sus elementos y devuelve { codigoOrden } desde el parámetro OUT de Oracle.
 */
 export async function registrarCalculoTigimoli(data) {
 
@@ -48,6 +50,11 @@ export async function registrarCalculoTigimoli(data) {
             END;
             `,
             {
+                /*
+                  Las cuatro listas se envían como binds NUMBER IN. Los valores
+                  en una misma posición describen molinete, talla, cantidad de
+                  rollos y RPM de un detalle; el servicio conserva esa relación.
+                */
                 codigos_molinetes: {
                     type: oracledb.NUMBER,
                     dir: oracledb.BIND_IN,
@@ -72,10 +79,17 @@ export async function registrarCalculoTigimoli(data) {
                     val: data.rpmsMolinetes
                 },
 
+                /*
+                  Hilaza y usuario son entradas comunes a todos los detalles.
+                */
                 cod_tipo_hilaza: data.codTipoHilaza,
 
                 usuario: data.usuario,
 
+                /*
+                  NUMBER OUT recibe el consecutivo generado por el procedimiento;
+                  se devuelve como codigoOrden, sin calcularlo en JavaScript.
+                */
                 codigo_orden: {
                     type: oracledb.NUMBER,
                     dir: oracledb.BIND_OUT
@@ -88,6 +102,11 @@ export async function registrarCalculoTigimoli(data) {
         };
 
     } finally {
+        /*
+          Intenta cerrar la conexión adquirida tanto al completar como al fallar.
+          Sin catch local, los errores se propagan; un error del propio cierre
+          también puede propagarse al llamador.
+        */
 
         if (connection) {
             await connection.close();

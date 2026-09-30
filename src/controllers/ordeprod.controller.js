@@ -23,7 +23,9 @@ import {
 import { handleError } from '../utils/handleError.js';
 
 /*
-  Atiende la consulta del historial de órdenes de trabajo aplicando los filtros y paginación recibidos.
+  Lee filtros y paginación de req.query y los entrega a consultarOrdeProd.
+  Responde HTTP 200 con success, totalRegistros y data, tomando el total
+  y el arreglo datos del resultado del servicio.
 */
 export async function consultar(req, res) {
 
@@ -38,6 +40,11 @@ export async function consultar(req, res) {
             registrosPagina
         } = req.query;
 
+        /*
+          Convierte orden, tipoHilaza y paginación con Number cuando la condición
+          del valor recibido es verdadera. En los demás casos usa null para
+          códigos, página 1 y tamaño 10. Las fechas se pasan sin convertir o null.
+        */
         const ordeprod = await consultarOrdeProd({
             codOrden: orden
                 ? Number(orden)
@@ -67,6 +74,10 @@ export async function consultar(req, res) {
         });
 
     } catch (error) {
+        /*
+          Delega el error, res y el mensaje de esta operación a handleError;
+          ese manejador determina la respuesta de error que recibe el cliente.
+        */
 
         return handleError(
             error,
@@ -78,21 +89,18 @@ export async function consultar(req, res) {
 
 }
 
-
 /*
-  Atiende la consulta del detalle de una Orden de Trabajo.
+  Lee codigo de req.params, lo convierte con Number y llama a
+  consultarDetalleOrdeProd. Devuelve HTTP 200 con success y el detalle
+  del servicio en data, sin transformar sus elementos.
 */
 export async function consultarDetalle(req, res) {
 
     try {
 
-        const {
-            codigo
-        } = req.params;
+        const { codigo } = req.params;
 
-        const detalle = await consultarDetalleOrdeProd(
-            Number(codigo)
-        );
+        const detalle = await consultarDetalleOrdeProd(Number(codigo));
 
         return res.status(200).json({
             success: true,
@@ -100,6 +108,10 @@ export async function consultarDetalle(req, res) {
         });
 
     } catch (error) {
+        /*
+          Delega el error, res y el mensaje de esta operación a handleError;
+          ese manejador determina la respuesta de error que recibe el cliente.
+        */
 
         return handleError(
             error,

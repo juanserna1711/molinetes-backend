@@ -18,7 +18,8 @@ import oracledb from 'oracledb';
 import { getConnection } from '../config/database.js';
 
 /*
-  Consulta los tallas utilizando los filtros recibidos.
+  Invoca PKG_TALLA.consultaTalla con código, nombre y estado opcionales.
+  Envía null para filtros ausentes y devuelve objetos de talla desde el cursor.
 */
 export async function consultarTallas({
     codTalla = null,
@@ -55,12 +56,20 @@ export async function consultarTallas({
             }
         );
 
+        /*
+          El bind OUT de tipo CURSOR entrega el result set abierto por Oracle.
+          Se leen sus filas y se cierra antes de construir la respuesta.
+        */
         const resultSet = result.outBinds.cursor;
 
         const rows = await resultSet.getRows();
 
         await resultSet.close();
 
+        /*
+          Convierte las tres columnas del cursor a propiedades del servicio:
+          código [0], nombre [1] y estado [2], conservando sus valores.
+        */
         return rows.map(row => ({
             codigo: row[0],
             nombre: row[1],
@@ -68,15 +77,20 @@ export async function consultarTallas({
         }));
 
     } finally {
+        /*
+          Intenta cerrar la conexión adquirida tanto al completar como al fallar.
+          Sin catch local, los errores se propagan; un error del propio cierre
+          también puede propagarse al llamador.
+        */
         if (connection) {
             await connection.close();
         }
     }
 }
 
-
 /*
-  Registra un nuevo talla con la información recibida.
+  Invoca PKG_TALLA.insertarTalla vinculando codTalla, nomTalla y estaTalla
+  de data con los binds de entrada de código, nombre y estado.
 */
 export async function insertarTalla(data) {
 
@@ -103,6 +117,11 @@ export async function insertarTalla(data) {
         );
 
     } finally {
+        /*
+          Intenta cerrar la conexión adquirida tanto al completar como al fallar.
+          Sin catch local, los errores se propagan; un error del propio cierre
+          también puede propagarse al llamador.
+        */
         if (connection) {
             await connection.close();
         }
@@ -110,7 +129,8 @@ export async function insertarTalla(data) {
 }
 
 /*
-  Actualiza la información del talla seleccionado.
+  Invoca PKG_TALLA.actualizarTalla con el identificador codTalla y el
+  nombre y estado de data; estos valores se envían directamente a Oracle.
 */
 export async function actualizarTalla(codTalla, data) {
 
@@ -137,6 +157,11 @@ export async function actualizarTalla(codTalla, data) {
         );
 
     } finally {
+        /*
+          Intenta cerrar la conexión adquirida tanto al completar como al fallar.
+          Sin catch local, los errores se propagan; un error del propio cierre
+          también puede propagarse al llamador.
+        */
         if (connection) {
             await connection.close();
         }
@@ -144,7 +169,8 @@ export async function actualizarTalla(codTalla, data) {
 }
 
 /*
-  Activa el registro correspondiente al código recibido.
+  Solicita la activación a PKG_TALLA.activarTalla mediante el bind cod_talla.
+  El servicio delega el cambio de estado y sus validaciones en Oracle.
 */
 export async function activarTalla(codTalla) {
 
@@ -165,6 +191,11 @@ export async function activarTalla(codTalla) {
         );
 
     } finally {
+        /*
+          Intenta cerrar la conexión adquirida tanto al completar como al fallar.
+          Sin catch local, los errores se propagan; un error del propio cierre
+          también puede propagarse al llamador.
+        */
         if (connection) {
             await connection.close();
         }
@@ -172,7 +203,8 @@ export async function activarTalla(codTalla) {
 }
 
 /*
-  Desactiva el registro correspondiente al código recibido.
+  Solicita la desactivación a PKG_TALLA.desactivarTalla mediante cod_talla.
+  El servicio delega el cambio de estado y sus validaciones en Oracle.
 */
 export async function desactivarTalla(codTalla) {
 
@@ -193,6 +225,11 @@ export async function desactivarTalla(codTalla) {
         );
 
     } finally {
+        /*
+          Intenta cerrar la conexión adquirida tanto al completar como al fallar.
+          Sin catch local, los errores se propagan; un error del propio cierre
+          también puede propagarse al llamador.
+        */
         if (connection) {
             await connection.close();
         }
@@ -200,7 +237,8 @@ export async function desactivarTalla(codTalla) {
 }
 
 /*
-  Elimina el talla correspondiente al código recibido.
+  Invoca PKG_TALLA.eliminarTalla con codTalla como único bind de entrada.
+  Oracle determina si el registro puede eliminarse.
 */
 export async function eliminarTalla(codTalla) {
 
@@ -221,6 +259,11 @@ export async function eliminarTalla(codTalla) {
         );
 
     } finally {
+        /*
+          Intenta cerrar la conexión adquirida tanto al completar como al fallar.
+          Sin catch local, los errores se propagan; un error del propio cierre
+          también puede propagarse al llamador.
+        */
         if (connection) {
             await connection.close();
         }

@@ -23,9 +23,11 @@ import {
 
 import { handleError } from '../utils/handleError.js';
 
-
 /*
-  Atiende la consulta del recurso y entrega los resultados al cliente.
+  Lee codigo y nombre de req.query para consultarTiposHilaza.
+  Convierte codigo con Number cuando su condición es verdadera; de otro
+  modo usa null. Para nombre envía su valor o null.
+  Responde HTTP 200 con success y los tipos de hilaza en data.
 */
 export async function consultar(req, res) {
     try {
@@ -42,6 +44,10 @@ export async function consultar(req, res) {
         });
 
     } catch (error) {
+        /*
+          Delega el error, res y el mensaje de esta operación a handleError;
+          ese manejador determina la respuesta de error que recibe el cliente.
+        */
         return handleError(
             error,
             res,
@@ -50,9 +56,9 @@ export async function consultar(req, res) {
     }
 }
 
-
 /*
-  Atiende el registro de los datos recibidos y comunica el resultado.
+  Entrega req.body completo a insertarTipoHilaza sin transformar sus campos.
+  Al completarse responde HTTP 201 con success y el mensaje de creación.
 */
 export async function crear(req, res) {
     try {
@@ -64,6 +70,10 @@ export async function crear(req, res) {
         });
 
     } catch (error) {
+        /*
+          Delega el error, res y el mensaje de esta operación a handleError;
+          ese manejador determina la respuesta de error que recibe el cliente.
+        */
         return handleError(
             error,
             res,
@@ -72,18 +82,16 @@ export async function crear(req, res) {
     }
 }
 
-
 /*
-  Atiende la actualización del registro indicado.
+  Convierte req.params.codigo a número y lo entrega junto con req.body
+  a actualizarTipoHilaza. Responde HTTP 200 con success y el mensaje
+  de actualización, sin devolver el registro modificado.
 */
 export async function actualizar(req, res) {
     try {
         const codTipoHilaza = Number(req.params.codigo);
 
-        await actualizarTipoHilaza(
-            codTipoHilaza,
-            req.body
-        );
+        await actualizarTipoHilaza(codTipoHilaza, req.body);
 
         return res.status(200).json({
             success: true,
@@ -91,6 +99,10 @@ export async function actualizar(req, res) {
         });
 
     } catch (error) {
+        /*
+          Delega el error, res y el mensaje de esta operación a handleError;
+          ese manejador determina la respuesta de error que recibe el cliente.
+        */
         return handleError(
             error,
             res,
@@ -99,9 +111,9 @@ export async function actualizar(req, res) {
     }
 }
 
-
 /*
-  Atiende la eliminación del registro indicado.
+  Convierte req.params.codigo a número y lo pasa a eliminarTipoHilaza.
+  Devuelve HTTP 200 con success y el mensaje de eliminación al completarse.
 */
 export async function eliminar(req, res) {
     try {
@@ -115,6 +127,10 @@ export async function eliminar(req, res) {
         });
 
     } catch (error) {
+        /*
+          Delega el error, res y el mensaje de esta operación a handleError;
+          ese manejador determina la respuesta de error que recibe el cliente.
+        */
         return handleError(
             error,
             res,

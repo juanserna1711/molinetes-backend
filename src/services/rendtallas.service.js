@@ -18,12 +18,12 @@ import oracledb from 'oracledb';
 import { getConnection } from '../config/database.js';
 
 /*
-  Consulta los rendimientos por talla utilizando los filtros recibidos.
+  Invoca PKG_RENDTALLA.consultaRendTalla con nombre opcional.
+  Devuelve objetos con datos de talla, medidas, resultados del rendimiento
+  y datos de registro; los filtros ausentes se envían como null.
 */
 export async function consultarRendTallas({
-    codTalla = null,
-    nomTalla = null,
-    estaTalla = null
+    nomTalla = null
 } = {}) {
 
     let connection;
@@ -36,17 +36,13 @@ export async function consultarRendTallas({
             `
             BEGIN
                 PKG_RENDTALLA.consultaRendTalla(
-                    :cod_talla,
                     :nom_talla,
-                    :esta_talla,
                     :cursor
                 );
             END;
             `,
             {
-                cod_talla: codTalla,
                 nom_talla: nomTalla,
-                esta_talla: estaTalla,
 
                 cursor: {
                     dir: oracledb.BIND_OUT,
@@ -55,12 +51,21 @@ export async function consultarRendTallas({
             }
         );
 
+        /*
+          El bind OUT de tipo CURSOR entrega el result set abierto por Oracle.
+          Se leen sus filas y se cierra antes de construir la respuesta.
+        */
         const resultSet = result.outBinds.cursor;
 
         const rows = await resultSet.getRows();
 
         await resultSet.close();
 
+        /*
+          El cursor aporta talla [0-2], ancho [3], peso por m2 [4], peso del
+          rollo [5], rendimiento [6], metros por rollo [7], fecha [8] y usuario [9].
+          Se renombran las posiciones sin recalcular ni reemplazar valores nulos.
+        */
         return rows.map(row => ({
             codigo: row[0],
             nombre: row[1],
@@ -75,6 +80,11 @@ export async function consultarRendTallas({
         }));
 
     } finally {
+        /*
+          Intenta cerrar la conexión adquirida tanto al completar como al fallar.
+          Sin catch local, los errores se propagan; un error del propio cierre
+          también puede propagarse al llamador.
+        */
         if (connection) {
             await connection.close();
         }
@@ -82,7 +92,9 @@ export async function consultarRendTallas({
 }
 
 /*
-  Registra un nuevo rendimiento por talla con la información recibida.
+  Invoca PKG_RENDTALLA.insertarRendTalla con talla, ancho, peso por m2,
+  peso del rollo y usuario de data como binds de entrada. El servicio no
+  calcula rendimiento ni metros: esa responsabilidad queda en Oracle.
 */
 export async function insertarRendTalla(data) {
 
@@ -113,6 +125,11 @@ export async function insertarRendTalla(data) {
         );
 
     } finally {
+        /*
+          Intenta cerrar la conexión adquirida tanto al completar como al fallar.
+          Sin catch local, los errores se propagan; un error del propio cierre
+          también puede propagarse al llamador.
+        */
         if (connection) {
             await connection.close();
         }
@@ -120,7 +137,9 @@ export async function insertarRendTalla(data) {
 }
 
 /*
-  Actualiza la información del rendimiento por talla seleccionado.
+  Invoca PKG_RENDTALLA.actualizarRendTalla para codTalla, enviando las
+  medidas y el usuario de data. Conserva los valores al vincular las
+  propiedades JavaScript con los parámetros de entrada PL/SQL.
 */
 export async function actualizarRendTalla(codTalla, data) {
 
@@ -151,6 +170,11 @@ export async function actualizarRendTalla(codTalla, data) {
         );
 
     } finally {
+        /*
+          Intenta cerrar la conexión adquirida tanto al completar como al fallar.
+          Sin catch local, los errores se propagan; un error del propio cierre
+          también puede propagarse al llamador.
+        */
         if (connection) {
             await connection.close();
         }
@@ -158,7 +182,8 @@ export async function actualizarRendTalla(codTalla, data) {
 }
 
 /*
-  Elimina el rendimiento por talla correspondiente al código recibido.
+  Invoca PKG_RENDTALLA.eliminarRendTalla con codTalla como único bind.
+  Solicita eliminar la información de rendimiento asociada a esa talla.
 */
 export async function eliminarRendTalla(codTalla) {
 
@@ -179,6 +204,11 @@ export async function eliminarRendTalla(codTalla) {
         );
 
     } finally {
+        /*
+          Intenta cerrar la conexión adquirida tanto al completar como al fallar.
+          Sin catch local, los errores se propagan; un error del propio cierre
+          también puede propagarse al llamador.
+        */
         if (connection) {
             await connection.close();
         }

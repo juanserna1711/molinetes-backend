@@ -18,7 +18,9 @@ import oracledb from 'oracledb';
 import { getConnection } from '../config/database.js';
 
 /*
-  Consulta los usuarios utilizando los filtros recibidos.
+  Invoca PKG_USUARIO.consultaUsuario con código, nombre y estado opcionales.
+  Los filtros ausentes se envían como null; devuelve objetos de usuario
+  con los cuatro valores recibidos por el cursor Oracle.
 */
 export async function consultarUsuarios({
     codUsuario = null,
@@ -54,12 +56,20 @@ export async function consultarUsuarios({
             }
         );
 
+        /*
+          El bind OUT de tipo CURSOR entrega el result set abierto por Oracle.
+          Se leen sus filas y se cierra antes de construir la respuesta.
+        */
         const resultSet = result.outBinds.cursor;
 
         const rows = await resultSet.getRows();
 
         await resultSet.close();
 
+        /*
+          El cursor se mapea por posición: código [0], nombre [1], password [2]
+          y estado [3]. El valor de password se incluye tal como llega de Oracle.
+        */
         return rows.map(row => ({
             codigo: row[0],
             nombre: row[1],
@@ -68,6 +78,11 @@ export async function consultarUsuarios({
         }));
 
     } finally {
+        /*
+          Intenta cerrar la conexión adquirida tanto al completar como al fallar.
+          Sin catch local, los errores se propagan; un error del propio cierre
+          también puede propagarse al llamador.
+        */
         if (connection) {
             await connection.close();
         }
@@ -75,7 +90,9 @@ export async function consultarUsuarios({
 }
 
 /*
-  Registra un nuevo usuario con la información recibida.
+  Invoca PKG_USUARIO.insertarUsuario con código, nombre, contraseña y estado
+  de data como binds de entrada. passUsuario se transmite sin transformación
+  en esta función.
 */
 export async function insertarUsuario(data) {
 
@@ -104,6 +121,11 @@ export async function insertarUsuario(data) {
         );
 
     } finally {
+        /*
+          Intenta cerrar la conexión adquirida tanto al completar como al fallar.
+          Sin catch local, los errores se propagan; un error del propio cierre
+          también puede propagarse al llamador.
+        */
         if (connection) {
             await connection.close();
         }
@@ -111,7 +133,9 @@ export async function insertarUsuario(data) {
 }
 
 /*
-  Actualiza la información del usuario seleccionado.
+  Invoca PKG_USUARIO.actualizarUsuario con codUsuario como identificador
+  y nombre, contraseña y estado de data. Los binds conservan los valores
+  recibidos, incluido passUsuario.
 */
 export async function actualizarUsuario(codUsuario, data) {
 
@@ -140,6 +164,11 @@ export async function actualizarUsuario(codUsuario, data) {
         );
 
     } finally {
+        /*
+          Intenta cerrar la conexión adquirida tanto al completar como al fallar.
+          Sin catch local, los errores se propagan; un error del propio cierre
+          también puede propagarse al llamador.
+        */
         if (connection) {
             await connection.close();
         }
@@ -147,7 +176,8 @@ export async function actualizarUsuario(codUsuario, data) {
 }
 
 /*
-  Activa el registro correspondiente al código recibido.
+  Solicita la activación a PKG_USUARIO.activarUsuario mediante cod_usuario.
+  El cambio de estado y sus validaciones se delegan a Oracle.
 */
 export async function activarUsuario(codUsuario) {
 
@@ -168,6 +198,11 @@ export async function activarUsuario(codUsuario) {
         );
 
     } finally {
+        /*
+          Intenta cerrar la conexión adquirida tanto al completar como al fallar.
+          Sin catch local, los errores se propagan; un error del propio cierre
+          también puede propagarse al llamador.
+        */
         if (connection) {
             await connection.close();
         }
@@ -175,7 +210,8 @@ export async function activarUsuario(codUsuario) {
 }
 
 /*
-  Desactiva el registro correspondiente al código recibido.
+  Solicita la desactivación a PKG_USUARIO.desactivarUsuario mediante
+  cod_usuario, sin solicitar la eliminación del registro.
 */
 export async function desactivarUsuario(codUsuario) {
 
@@ -196,6 +232,11 @@ export async function desactivarUsuario(codUsuario) {
         );
 
     } finally {
+        /*
+          Intenta cerrar la conexión adquirida tanto al completar como al fallar.
+          Sin catch local, los errores se propagan; un error del propio cierre
+          también puede propagarse al llamador.
+        */
         if (connection) {
             await connection.close();
         }
@@ -203,7 +244,8 @@ export async function desactivarUsuario(codUsuario) {
 }
 
 /*
-  Elimina el usuario correspondiente al código recibido.
+  Invoca PKG_USUARIO.eliminarUsuario con codUsuario como único bind.
+  Los errores de la operación se propagan tras intentar cerrar la conexión.
 */
 export async function eliminarUsuario(codUsuario) {
 
@@ -224,6 +266,11 @@ export async function eliminarUsuario(codUsuario) {
         );
 
     } finally {
+        /*
+          Intenta cerrar la conexión adquirida tanto al completar como al fallar.
+          Sin catch local, los errores se propagan; un error del propio cierre
+          también puede propagarse al llamador.
+        */
         if (connection) {
             await connection.close();
         }

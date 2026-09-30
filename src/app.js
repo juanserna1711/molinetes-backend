@@ -34,46 +34,23 @@ const app = express();
 
 const PORT = process.env.PORT || 3000;
 
-
 /*
   Middlewares
 */
 app.use(cors());
 app.use(express.json());
 
-
-/*
-  Ruta de prueba
-*/
-app.get('/health', (req, res) => {
-
-    res.status(200).json({
-        success: true,
-        message: 'Molinetes Backend funcionando correctamente.'
-    });
-
-});
-
-
 /*
   Rutas
 */
 app.use('/api/tallas', tallasRoutes);
-
 app.use('/api/rendtallas', rendtallasRoutes);
-
 app.use('/api/usuarios', usuariosRoutes);
-
 app.use('/api/molinetes', molinetesRoutes);
-
 app.use('/api/tigimoli', tigimoliRoutes);
-
 app.use('/api/tipohilaza', tipohilazaRoutes);
-
 app.use('/api/tihiprom', tihipromRoutes);
-
 app.use('/api/ordeprod', ordeprodRoutes);
-
 
 /*
   Inicializa la conexión con Oracle y pone en marcha el servidor.
@@ -85,22 +62,7 @@ async function startServer() {
         await initDatabase();
 
         app.listen(PORT, () => {
-
-            console.log('======================================');
-            console.log(' MOLINETES BACKEND');
-            console.log('======================================');
-            console.log(`Servidor: http://localhost:${PORT}`);
-            console.log(`Health:   http://localhost:${PORT}/health`);
-            console.log(`Tallas:   http://localhost:${PORT}/api/tallas`);
-            console.log(`Rendimiento x Talla: http://localhost:${PORT}/api/rendtallas`);
-            console.log(`Usuarios: http://localhost:${PORT}/api/usuarios`);
-            console.log(`Molinetes: http://localhost:${PORT}/api/molinetes`);
-            console.log(`Tigimoli: http://localhost:${PORT}/api/tigimoli`);
-            console.log(`Tipos Hilaza: http://localhost:${PORT}/api/tipohilaza`);
-            console.log(`Tipos Hilaza Prom: http://localhost:${PORT}/api/tihiprom`);
-            console.log(`Orden Produccion: http://localhost:${PORT}/api/ordeprod`);
-            console.log('======================================');
-
+          console.log ("Molinetes Backend Iniciado Correctamente")
         });
 
     } catch (error) {
