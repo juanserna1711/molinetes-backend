@@ -31,9 +31,7 @@ const poolConfig = {
 
 let pool;
 
-/*
-  Inicializa el pool de conexiones Oracle.
-*/
+//Inicializa el pool de conexiones Oracle.
 export async function initDatabase() {
     try {
         pool = await oracledb.createPool(poolConfig);
@@ -45,9 +43,7 @@ export async function initDatabase() {
     }
 }
 
-/*
-  Obtiene una conexión disponible para las operaciones de datos.
-*/
+// Obtiene una conexión disponible para las operaciones de datos.
 export async function getConnection() {
     if (!pool) {
         throw new Error('El pool de conexiones Oracle no ha sido inicializado.');
@@ -56,9 +52,7 @@ export async function getConnection() {
     return await pool.getConnection();
 }
 
-/*
-  Cierra el pool de conexiones Oracle.
-*/
+// Cierra el pool de conexiones Oracle.
 export async function closeDatabase() {
     if (pool) {
         await pool.close(10);
