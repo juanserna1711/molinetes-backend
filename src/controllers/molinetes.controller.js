@@ -58,8 +58,7 @@ export async function consultar(req, res) {
 
 /*
   Entrega req.body completo a insertarMolinete, sin transformarlo aquí.
-  Al completarse el servicio responde HTTP 201 con success y el mensaje
-  de creación; no devuelve el registro creado.
+  Al completarse el servicio responde HTTP 201 con success y el mensaje de creación; no devuelve el registro creado.
 */
 export async function crear(req, res) {
     try {
@@ -114,8 +113,7 @@ export async function actualizar(req, res) {
 
 /*
   Convierte req.params.codigo a número y lo pasa a eliminarMolinete.
-  Tras completar el servicio responde HTTP 200 con success y el mensaje
-  de eliminación; esta operación no utiliza req.body.
+  Tras completar el servicio responde HTTP 200 con success y el mensaje de eliminación; esta operación no utiliza req.body.
 */
 export async function eliminar(req, res) {
     try {

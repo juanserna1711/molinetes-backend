@@ -149,21 +149,6 @@ export function handleError(error, res, defaultMessage) {
             status: 400,
             field: 'codTalla',
             message: 'La talla RIB no puede tener información asociada en promedios por tipo de hilaza.'
-        },
-        20024: {
-            status: 400,
-            field: null,
-            message: 'El ancho utilizado para el cálculo debe ser mayor que cero.'
-        },
-        20025: {
-            status: 400,
-            field: null,
-            message: 'El peso utilizado para el cálculo debe ser mayor que cero.'
-        },
-        20026: {
-            status: 400,
-            field: 'rolloRendtall',
-            message: 'El peso del rollo debe ser mayor que cero.'
         }
     };
 
