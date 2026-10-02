@@ -18,8 +18,7 @@ import {
     consultarTiHiProm,
     insertarTiHiProm,
     actualizarTiHiProm,
-    eliminarTiHiProm,
-    aplicarTipoHilaza
+    eliminarTiHiProm
 } from '../services/tihiprom.service.js';
 
 import { handleError } from '../utils/handleError.js';
@@ -35,12 +34,8 @@ export async function consultar(req, res) {
         const { tipoHilaza, talla } = req.query;
 
         const tiHiProm = await consultarTiHiProm({
-            codTipoHilaza: tipoHilaza
-                ? Number(tipoHilaza)
-                : null,
-            codTalla: talla
-                ? Number(talla)
-                : null
+            codTipoHilaza: tipoHilaza ? Number(tipoHilaza) : null,
+            codTalla: talla ? Number(talla) : null
         });
 
         return res.status(200).json({
@@ -145,37 +140,6 @@ export async function eliminar(req, res) {
             error,
             res,
             'Error al eliminar el promedio por tipo de hilaza.'
-        );
-    }
-}
-
-/*
-  Convierte req.params.tipoHilaza a número y extrae usuarioRendtall de
-  req.body sin convertirlo. Llama a aplicarTipoHilaza con ambos valores
-  y responde HTTP 200 con success y el mensaje de aplicación a RENDTALL.
-*/
-export async function aplicar(req, res) {
-    try {
-        const codTipoHilaza = Number(req.params.tipoHilaza);
-
-        const { usuarioRendtall } = req.body;
-
-        await aplicarTipoHilaza(codTipoHilaza, usuarioRendtall);
-
-        return res.status(200).json({
-            success: true,
-            message: 'Tipo de hilaza aplicado correctamente al rendimiento por talla.'
-        });
-
-    } catch (error) {
-        /*
-          Delega el error, res y el mensaje de esta operación a handleError;
-          ese manejador determina la respuesta de error que recibe el cliente.
-        */
-        return handleError(
-            error,
-            res,
-            'Error al aplicar el tipo de hilaza al rendimiento por talla.'
         );
     }
 }

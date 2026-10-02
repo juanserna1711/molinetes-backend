@@ -13,9 +13,8 @@
   Fecha:
   Descripcion:
 =============================================================================*/
-/*
-  Convierte los errores reconocidos en mensajes para el cliente y usa un mensaje general para los demás.
-*/
+
+//Convierte los errores reconocidos en mensajes para el cliente y usa un mensaje general para los demás.
 export function handleError(error, res, defaultMessage) {
     console.error(error);
 
@@ -114,19 +113,16 @@ export function handleError(error, res, defaultMessage) {
             field: null,
             message: 'No se puede eliminar la talla porque tiene cálculos de tiempo de giro asociados.'
         },
-
         20017: {
             status: 400,
             field: null,
             message: 'No se puede eliminar el molinete porque tiene cálculos de tiempo de giro asociados.'
         },
-
         20018: {
             status: 404,
             field: 'codTipoHilaza',
             message: 'El tipo de hilaza indicado no existe.'
         },
-
         20019: {
             status: 409,
             field: null,
@@ -147,7 +143,7 @@ export function handleError(error, res, defaultMessage) {
         20022: {
             status: 409,
             field: null,
-            message: 'El tipo de hilaza no tiene información de promedio asociada.'
+            message: 'La talla no tiene información asociada al tipo de hilaza seleccionado.'
         },
         20023: {
             status: 400,

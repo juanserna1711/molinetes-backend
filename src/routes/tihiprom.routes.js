@@ -20,8 +20,7 @@ import {
     consultar,
     crear,
     actualizar,
-    eliminar,
-    aplicar
+    eliminar
 } from '../controllers/tihiprom.controller.js';
 
 const router = Router();
@@ -34,8 +33,6 @@ router.post('/', crear);
 router.put('/:tipoHilaza/:talla', actualizar);
 
 router.delete('/:tipoHilaza/:talla', eliminar);
-
-router.patch('/:tipoHilaza/aplicar', aplicar);
 
 
 export default router;
