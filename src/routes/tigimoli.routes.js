@@ -15,14 +15,14 @@
 =============================================================================*/
 
 import { Router } from 'express';
+import { autenticarUsuario } from '../middlewares/auth.middleware.js';
+import { validarPermiso } from '../middlewares/permisos.middleware.js';
 
-import {
-    crear
-} from '../controllers/tigimoli.controller.js';
+import {crear} from '../controllers/tigimoli.controller.js';
 
 const router = Router();
 
-router.post('/', crear);
+router.post('/', autenticarUsuario, validarPermiso(7, 'insercion'), crear);
 
 
 export default router;

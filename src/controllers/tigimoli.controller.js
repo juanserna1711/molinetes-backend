@@ -32,7 +32,7 @@ export async function crear(req, res) {
 
     try {
 
-        const resultado = await registrarCalculoTigimoli(req.body);
+        const resultado = await registrarCalculoTigimoli({...req.body, usuario: req.user.codigo});
 
         return res.status(201).json({
             success: true,

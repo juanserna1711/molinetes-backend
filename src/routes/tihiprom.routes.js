@@ -15,6 +15,8 @@
 =============================================================================*/
 
 import { Router } from 'express';
+import { autenticarUsuario } from '../middlewares/auth.middleware.js';
+import { validarPermiso } from '../middlewares/permisos.middleware.js';
 
 import {
     consultar,
@@ -26,13 +28,13 @@ import {
 const router = Router();
 
 
-router.get('/', consultar);
+router.get('/', autenticarUsuario, validarPermiso(5, 'consulta'), consultar);
 
-router.post('/', crear);
+router.post('/', autenticarUsuario, validarPermiso(5, 'insercion'), crear);
 
-router.put('/:tipoHilaza/:talla', actualizar);
+router.put('/:tipoHilaza/:talla', autenticarUsuario, validarPermiso(5, 'actualiza'), actualizar);
 
-router.delete('/:tipoHilaza/:talla', eliminar);
+router.delete('/:tipoHilaza/:talla', autenticarUsuario, validarPermiso(5, 'elimina'), eliminar);
 
 
 export default router;
