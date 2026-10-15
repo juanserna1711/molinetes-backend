@@ -32,9 +32,7 @@ export async function consultar(req, res) {
     try {
         const { nombre} = req.query;
 
-        const rendTallas = await consultarRendTallas({
-            nomTalla: nombre || null
-        });
+        const rendTallas = await consultarRendTallas({nomTalla: nombre || null});
 
         return res.status(200).json({
             success: true,
@@ -61,7 +59,7 @@ export async function consultar(req, res) {
 */
 export async function crear(req, res) {
     try {
-        await insertarRendTalla(req.body);
+        await insertarRendTalla({...req.body, usuarioRendtall: req.user.codigo});
 
         return res.status(201).json({
             success: true,
@@ -90,7 +88,7 @@ export async function actualizar(req, res) {
     try {
         const codTalla = Number(req.params.codigo);
 
-        await actualizarRendTalla(codTalla, req.body);
+        await actualizarRendTalla(codTalla,{...req.body, usuarioRendtall: req.user.codigo});
 
         return res.status(200).json({
             success: true,

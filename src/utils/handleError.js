@@ -149,6 +149,16 @@ export function handleError(error, res, defaultMessage) {
             status: 400,
             field: 'codTalla',
             message: 'La talla RIB no puede tener información asociada en promedios por tipo de hilaza.'
+        },
+        20024: {
+            status: 404,
+            field: null,
+            message: 'El Modulo indicado no existe.'
+        },
+        20025: {
+            status: 404,
+            field: null,
+            message: 'La regla indicada no existe.'
         }
     };
 

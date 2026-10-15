@@ -15,6 +15,8 @@
 =============================================================================*/
 
 import { Router } from 'express';
+import { autenticarUsuario } from '../middlewares/auth.middleware.js';
+import { validarPermiso } from '../middlewares/permisos.middleware.js';
 
 import {
     consultar,
@@ -23,7 +25,7 @@ import {
 
 const router = Router();
 
-router.get('/', consultar);
-router.get('/:codigo', consultarDetalle);
+router.get('/', autenticarUsuario, validarPermiso(8, 'consulta'), consultar);
+router.get('/:codigo', autenticarUsuario, validarPermiso(8, 'consulta'), consultarDetalle);
 
 export default router;

@@ -17,8 +17,10 @@
 import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
+import cookieParser from 'cookie-parser';
 
 import { initDatabase, closeDatabase } from './config/database.js';
+import authRoutes from './routes/auth.routes.js';
 import tallasRoutes from './routes/tallas.routes.js';
 import rendtallasRoutes from './routes/rendtallas.routes.js';
 import usuariosRoutes from './routes/usuarios.routes.js';
@@ -26,7 +28,9 @@ import molinetesRoutes from './routes/molinetes.routes.js';
 import tigimoliRoutes from './routes/tigimoli.routes.js';
 import tipohilazaRoutes from './routes/tipohilaza.routes.js';
 import tihipromRoutes from './routes/tihiprom.routes.js';
-import ordeprodRoutes from './routes/ordeprod.routes.js'
+import ordeprodRoutes from './routes/ordeprod.routes.js';
+import modulosRoutes from './routes/modulos.routes.js';
+import reglasRoutes from './routes/reglas.routes.js';
 
 dotenv.config();
 
@@ -37,12 +41,17 @@ const PORT = process.env.PORT || 3000;
 /*
   Middlewares
 */
-app.use(cors());
+app.use(cors({
+    origin: process.env.FRONTEND_URL,
+    credentials: true
+}));
+app.use(cookieParser());
 app.use(express.json());
 
 /*
   Rutas
 */
+app.use('/api/auth', authRoutes);
 app.use('/api/tallas', tallasRoutes);
 app.use('/api/rendtallas', rendtallasRoutes);
 app.use('/api/usuarios', usuariosRoutes);
@@ -51,6 +60,8 @@ app.use('/api/tigimoli', tigimoliRoutes);
 app.use('/api/tipohilaza', tipohilazaRoutes);
 app.use('/api/tihiprom', tihipromRoutes);
 app.use('/api/ordeprod', ordeprodRoutes);
+app.use('/api/modulos', modulosRoutes);
+app.use('/api/reglas', reglasRoutes);
 
 /*
   Inicializa la conexión con Oracle y pone en marcha el servidor.

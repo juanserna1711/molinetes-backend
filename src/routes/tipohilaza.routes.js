@@ -15,6 +15,8 @@
 =============================================================================*/
 
 import { Router } from 'express';
+import { autenticarUsuario } from '../middlewares/auth.middleware.js';
+import { validarPermiso } from '../middlewares/permisos.middleware.js';
 
 import {
     consultar,
@@ -26,13 +28,13 @@ import {
 const router = Router();
 
 
-router.get('/', consultar);
+router.get('/', autenticarUsuario, validarPermiso(4, 'consulta'), consultar);
 
-router.post('/', crear);
+router.post('/', autenticarUsuario, validarPermiso(4, 'insercion'), crear);
 
-router.put('/:codigo', actualizar);
+router.put('/:codigo', autenticarUsuario, validarPermiso(4, 'actualiza'), actualizar);
 
-router.delete('/:codigo', eliminar);
+router.delete('/:codigo', autenticarUsuario, validarPermiso(4, 'elimina'), eliminar);
 
 
 export default router;

@@ -62,7 +62,7 @@ export async function consultar(req, res) {
 */
 export async function crear(req, res) {
     try {
-        await insertarTiHiProm(req.body);
+        await insertarTiHiProm({...req.body, usuarioTiHiProm: req.user.codigo});
 
         return res.status(201).json({
             success: true,
@@ -93,7 +93,7 @@ export async function actualizar(req, res) {
 
         const codTalla = Number(req.params.talla);
 
-        await actualizarTiHiProm(codTipoHilaza, codTalla, req.body);
+        await actualizarTiHiProm(codTipoHilaza, codTalla,{...req.body, usuarioTiHiProm: req.user.codigo});
 
         return res.status(200).json({
             success: true,
