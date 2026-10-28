@@ -31,6 +31,7 @@ import tihipromRoutes from './routes/tihiprom.routes.js';
 import ordeprodRoutes from './routes/ordeprod.routes.js';
 import modulosRoutes from './routes/modulos.routes.js';
 import reglasRoutes from './routes/reglas.routes.js';
+import orpratriRoutes from './routes/orpratri.routes.js';
 
 dotenv.config();
 
@@ -62,6 +63,7 @@ app.use('/api/tihiprom', tihipromRoutes);
 app.use('/api/ordeprod', ordeprodRoutes);
 app.use('/api/modulos', modulosRoutes);
 app.use('/api/reglas', reglasRoutes);
+app.use('/api/orpratri', orpratriRoutes);
 
 /*
   Inicializa la conexión con Oracle y pone en marcha el servidor.

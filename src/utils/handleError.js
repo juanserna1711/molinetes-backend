@@ -159,6 +159,17 @@ export function handleError(error, res, defaultMessage) {
             status: 404,
             field: null,
             message: 'La regla indicada no existe.'
+        },
+        20026: {
+            status: 404,
+            field: 'codOrden',
+            message: 'La orden de producción indicada no existe.'
+        },
+
+        20027: {
+            status: 409,
+            field: 'codOrden',
+            message: 'La orden de producción ya tiene atributos registrados.'
         }
     };
 
