@@ -75,7 +75,7 @@ async function startServer() {
         await initDatabase();
 
         app.listen(PORT, () => {
-          console.log ("Molinetes Backend Iniciado Correctamente")
+          console.log (`Molinetes Backend Iniciado Correctamente ${PORT}`)
         });
 
     } catch (error) {
